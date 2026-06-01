@@ -15,7 +15,7 @@ const tabs = [
 
 export default function BottomNav() {
   return (
-    <nav className="sticky bottom-0 z-100 bg-surface border-t border-border grid grid-cols-4">
+    <nav className="fixed bottom-0 left-0 right-0 z-100 bg-surface border-t border-border grid grid-cols-4">
       {tabs.map((tab) => (
         <NavLink
           key={tab.to}

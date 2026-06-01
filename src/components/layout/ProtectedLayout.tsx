@@ -19,9 +19,9 @@ export default function ProtectedLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col">
+    <div className="min-h-screen bg-bg">
       <TopBar />
-      <main className="flex-1 px-4 py-[14px] pb-[88px]">
+      <main className="px-4 py-[14px] pb-28">
         <Outlet />
       </main>
       <BottomNav />
