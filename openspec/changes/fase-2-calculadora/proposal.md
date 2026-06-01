@@ -23,9 +23,22 @@ Implementar la pantalla principal de la aplicación: la calculadora de producci�
 13. **App.tsx** — Reemplazar placeholder de ruta `/` con `<Calcular />`
 
 **Out of scope:**
-- Conexión con Supabase para centros (usa datos locales por ahora)
+- Conexión con Supabase para centros (usa datos locales por now)
 - Guardar cálculos en historial (Fase 4)
 - Dashboard (Fase 5)
+
+### Revision: Auth custom (agregado durante implementación)
+
+**Motivación**: La estrategia original usaba `supabase.auth.signInWithPassword()` con email sintético (`username@cocinerhosp.internal`). Esto agrega complejidad innecesaria — emails falsos, dependencia de Supabase Auth, sin control sobre la sesión.
+
+**Nuevo enfoque**: Login custom contra tabla `usuarios` en Supabase. El hook `useAuth` consulta la tabla directamente, verifica el PIN con bcryptjs, y maneja la sesión en localStorage como JSON plano.
+
+**Archivos afectados**:
+- `src/hooks/useAuth.ts` — Reescribir completamente
+- `src/lib/supabase.ts` — Sin cambios (solo el cliente, las queries van en hooks)
+- `src/pages/Login.tsx` — Sin cambios visuales (solo tipado de session)
+- `src/components/layout/ProtectedLayout.tsx` — Solo tipado de session
+- `package.json` — Agregar bcryptjs
 
 ### Approach
 

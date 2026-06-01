@@ -250,6 +250,54 @@ function detectarMerma(
 | 14 | Run `npx tsc --noEmit` | Zero errors |
 | 15 | Run `npm run build` | Build succeeds |
 
+### Auth Custom — Arquitectura
+
+#### Flujo de Login
+
+```
+Usuario ingresa username + PIN
+  → useAuth.signIn(username, pin)
+  → Valida formato (username no vacío, PIN 4 dígitos)
+  → supabase.from('usuarios').select('*').eq('username', username).eq('activo', true).single()
+  → Si no encuentra usuario o inactivo → "Usuario o PIN incorrecto"
+  → bcrypt.compare(pin, usuario.pin_hash)
+  → Si no coincide → "Usuario o PIN incorrecto"
+  → localStorage.setItem('cocinerhosp_session', JSON.stringify({ id, username, nombre_completo, rol }))
+  → Retorna { error?: string }
+
+Auth check on app mount:
+  → localStorage.getItem('cocinerhosp_session')
+  → Si existe → parse → setUser(profile) → loading=false
+  → Si no existe → user=null → loading=false
+
+Logout:
+  → localStorage.removeItem('cocinerhosp_session')
+  → setUser(null)
+```
+
+#### Interfaz Pública (sin cambios para consumidores)
+
+```typescript
+interface UseAuthReturn {
+  user: UserProfile | null     // antes: User | null (de Supabase)
+  session: UserProfile | null  // antes: Session | null (de Supabase)
+  loading: boolean
+  signIn: (username: string, pin: string) => Promise<{ error?: string }>
+  signOut: () => Promise<void>
+}
+```
+
+**Clave de migración**: `session` cambia de tipo (`Session` → `UserProfile | null`), pero todos los consumidores solo verifican `if (session)` como truthy/falsy. No acceden a propiedades internas de `Session`. Esto hace que el cambio sea transparente para Login.tsx y ProtectedLayout.tsx.
+
+#### Dependencias nuevas
+- `bcryptjs` (runtime) — para comparar PIN
+
+#### Sesión en localStorage
+- Key: `cocinerhosp_session`
+- Value: `JSON.stringify({ id, username, nombre_completo, rol })`
+- Se borra en signOut
+- No expira por ahora (igual que Supabase Auth persistence)
+
 ### Design Notes (from PROTOTYPE.html)
 
 - **Card headers**: icon (17px, accent color) + title (14px, semibold) with 7px gap

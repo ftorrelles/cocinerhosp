@@ -150,6 +150,46 @@ sobrante = neto_real - neto_necesario
 - Format: "{nombre}: {unidades} {unidad}"
 - Background pill color = center color at 13% opacity, text = center color
 
+### Autenticación Custom (revisión de arquitectura)
+
+**Reemplazo completo de Supabase Auth**
+
+- **Eliminar**: `supabase.auth.signInWithPassword()`, `supabase.auth.getSession()`, `supabase.auth.onAuthStateChange()`, `supabase.auth.signOut()`
+- **Nuevo flujo**:
+  1. `signIn(username, pin)` → query `usuarios` table WHERE `username = ? AND activo = true`
+  2. Client-side bcrypt compare between input PIN and `pin_hash` from DB
+  3. If match → save session to localStorage: `{ id, username, nombre_completo, rol }`
+  4. If no match → return error "Usuario o PIN incorrecto"
+  5. `signOut()` → clear localStorage session item
+  6. On mount → read session from localStorage, set loading=false
+
+**Perfil de usuario autenticado**:
+```typescript
+interface UserProfile {
+  id: string
+  username: string
+  nombre_completo: string
+  rol: string
+}
+```
+
+**Tabla `usuarios` en Supabase** (ya existe):
+```
+id (uuid), username (text), nombre_completo (text), rol (text), centro_id (uuid), activo (boolean), pin_hash (text)
+```
+
+**Validaciones**:
+- Username: `!username.trim()` → "Ingresá tu usuario"
+- PIN: debe tener 4 dígitos numéricos exactos → "El PIN debe tener 4 dígitos"
+- Conexión: si `supabase.from('usuarios')` falla → "Error de conexión. Verificá tu conexión a internet."
+- Usuario inactivo o no encontrado → "Usuario o PIN incorrecto"
+- PIN incorrecto (bcrypt no coincide) → "Usuario o PIN incorrecto"
+
+**Arquitectura migrable**:
+- El hook `useAuth` expone la misma interfaz pública (`signIn`, `signOut`, `session`/`loading`)
+- Los componentes consumidores (`Login.tsx`, `ProtectedLayout.tsx`) NO cambian su lógica
+- Para migrar a Supabase Auth o OAuth en el futuro: solo tocar `useAuth.ts`
+
 ### Edge Cases
 
 - **Total pacientes = 0**: Button shows "Calcular {Servicio} — 0 pac.", tapping shows error

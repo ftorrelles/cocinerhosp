@@ -266,6 +266,78 @@
 
 **Acceptance**: Build succeeds with PWA.
 
+---
+
+#### T16: Install bcryptjs dependency
+
+**Depends on**: Nothing
+**Files affected**: `package.json`, `node_modules/`
+
+**Steps**:
+1. `npm install bcryptjs`
+2. `npm install -D @types/bcryptjs`
+3. Verify `package.json` has `bcryptjs` in dependencies and `@types/bcryptjs` in devDependencies
+
+**Acceptance**: `bcryptjs` is importable, types are available.
+
+---
+
+#### T17: Add UserProfile type and rewrite useAuth hook
+
+**Depends on**: T16
+**Files affected**: `src/hooks/useAuth.ts`
+
+**Steps**:
+1. Define `UserProfile` interface: `{ id: string, username: string, nombre_completo: string, rol: string }`
+2. Define `UseAuthReturn` interface (same shape as before but with new types)
+3. Remove ALL `supabase.auth.*` calls
+4. Add SESSION_KEY constant: `cocinerhosp_session`
+5. `signIn(username, pin)`:
+   - Validate inputs (same format rules)
+   - Query `supabase.from('usuarios').select('*').eq('username', username).eq('activo', true).single()`
+   - Handle query errors → "Error de conexión"
+   - Handle no data → "Usuario o PIN incorrecto"
+   - `bcrypt.compare(pin, data.pin_hash)` → if false → "Usuario o PIN incorrecto"
+   - Save `{ id, username, nombre_completo, rol }` to localStorage
+   - Return `{}`
+6. On mount: read localStorage, parse, set user/loading
+7. `signOut()`: clear localStorage, set user null
+8. Return `{ user, session: user, loading, signIn, signOut }` (session = user for backward compat)
+
+**Acceptance**: Login flow works without Supabase Auth. Session persists across reload.
+
+---
+
+#### T18: Update consumers — ProtectedLayout.tsx + Login.tsx
+
+**Depends on**: T17
+**Files affected**: `src/components/layout/ProtectedLayout.tsx`, `src/pages/Login.tsx`
+
+**Steps**:
+1. ProtectedLayout: change `session` type (now `UserProfile | null` but same usage pattern)
+   - Verify `if (!session)` still works as guard — it does, since null is falsy
+2. Login: same — `session` is now `UserProfile | null` but usage is identical:
+   - `if (session)` → redirect (truthy check, works)
+   - No changes to visual structure
+3. Remove unused Supabase auth type imports if any
+
+**Acceptance**: Both components work with new session type. No visual regressions.
+
+---
+
+#### T19: TypeScript + Build verification
+
+**Depends on**: T17, T18, T16
+**Files affected**: None (verification)
+
+**Steps**:
+1. Run `npx tsc --noEmit`
+2. Fix any type errors
+3. Run `npm run build`
+4. Verify build succeeds with PWA
+
+**Acceptance**: Zero TS errors, build succeeds.
+
 ### Parallelization Map
 
 ```
