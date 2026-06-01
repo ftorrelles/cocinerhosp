@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
+import Calcular from './pages/Calcular'
 import ProtectedLayout from './components/layout/ProtectedLayout'
 
 function PlaceholderPage({ title }: { title: string }) {
@@ -17,7 +18,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
 
       <Route element={<ProtectedLayout />}>
-        <Route path="/" element={<PlaceholderPage title="Calcular" />} />
+        <Route path="/" element={<Calcular />} />
         <Route
           path="/blandas"
           element={<PlaceholderPage title="Dietas Blandas" />}
