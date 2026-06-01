@@ -58,11 +58,19 @@ export interface ResultadoPlato {
   mermaProtP: number
 }
 
+export interface UserSession {
+  id: string
+  username: string
+  nombre_completo: string
+  rol: string
+}
+
 export interface AppState {
   servicio: 'almuerzo' | 'cena'
   pacientes: Record<string, number>
   platos: Plato[]
   resultados: ResultadoPlato[] | null
+  user: UserSession | null
 
   setServicio: (s: 'almuerzo' | 'cena') => void
   setPaciente: (centroId: string, valor: number) => void
@@ -73,6 +81,7 @@ export interface AppState {
   calcular: () => void
   resetResultados: () => void
   getTotalPacientes: () => number
+  setUser: (user: UserSession | null) => void
 }
 
 // ── Helpers ──
@@ -138,6 +147,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   pacientes: getPacientesPorServicio('almuerzo'),
   platos: [createEjemploPlato()],
   resultados: null,
+  user: null,
 
   setServicio: (servicio) => {
     set({
@@ -259,6 +269,10 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   resetResultados: () => {
     set({ resultados: null })
+  },
+
+  setUser: (user) => {
+    set({ user })
   },
 
   getTotalPacientes: () => {

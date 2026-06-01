@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import bcrypt from 'bcryptjs'
 import { supabase } from '../lib/supabase'
+import { useAppStore } from '../store/useAppStore'
 
 const SESSION_KEY = 'cocinerhosp_session'
 
@@ -40,7 +41,14 @@ function clearSession(): void {
 }
 
 export function useAuth(): UseAuthReturn {
-  const [user, setUser] = useState<UserProfile | null>(() => loadSession())
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    const loaded = loadSession()
+    // Sync to Zustand for other components (TopBar, etc.)
+    if (loaded) {
+      useAppStore.getState().setUser(loaded)
+    }
+    return loaded
+  })
   const [loading, setLoading] = useState(false)
 
   // On mount, session already loaded via lazy initialiser
@@ -94,6 +102,7 @@ export function useAuth(): UseAuthReturn {
 
       saveSession(profile)
       setUser(profile)
+      useAppStore.getState().setUser(profile)
 
       return {}
     } catch (err) {
@@ -105,6 +114,7 @@ export function useAuth(): UseAuthReturn {
   const signOut = async (): Promise<void> => {
     clearSession()
     setUser(null)
+    useAppStore.getState().setUser(null)
   }
 
   return { user, session: user, loading, signIn, signOut }
