@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CocinerHosp — Producción</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #F4F3EF;
+  --surface: #FFFFFF;
+  --surface2: #EEEDE8;
+  --border: #D9D7CF;
+  --text: #1A1917;
+  --text2: #6B6860;
+  --text3: #9E9C95;
+  --accent: #1B5E3F;
+  --accent-light: #E8F3ED;
+  --accent2: #8B4513;
+  --accent2-light: #FAF0E6;
+  --warn: #B45309;
+  --warn-light: #FEF3C7;
+  --red: #991B1B;
+  --red-light: #FEE2E2;
+  --blue: #1E3A5F;
+  --blue-light: #EFF6FF;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--accent);
+  color: #fff;
+  padding: 14px 16px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-logo { font-size: 16px; font-weight: 600; letter-spacing: -.3px; display: flex; align-items: center; gap: 8px; }
+.topbar-logo i { font-size: 20px; }
+.topbar-fecha { font-size: 11px; opacity: .75; font-family: 'DM Mono', monospace; }
+
+/* ── NAV ── */
+.nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 52px;
+  z-index: 99;
+}
+.nav-btn {
+  padding: 10px 4px 8px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+}
+.nav-btn i { display: block; font-size: 20px; margin-bottom: 2px; }
+.nav-btn.on { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── SCREENS ── */
+.screen { display: none; padding: 14px; padding-bottom: 40px; }
+.screen.on { display: block; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.card-title i { font-size: 17px; color: var(--accent); }
+
+/* ── CENTROS ── */
+.centros-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px; }
+.centro-item { }
+.centro-label {
+  font-size: 11px;
+  color: var(--text2);
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.centro-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.centro-input {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 15px;
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  text-align: center;
+}
+.total-pac {
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.total-pac .num { font-size: 28px; font-weight: 600; font-family: 'DM Mono', monospace; }
+.total-pac .lbl { font-size: 12px; opacity: .8; }
+
+/* ── PLATO ITEM ── */
+.plato-item {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.plato-header {
+  background: var(--surface);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.plato-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-width: 0;
+}
+.plato-name::placeholder { color: var(--text3); font-weight: 400; }
+.btn-del {
+  padding: 4px 8px;
+  font-size: 13px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text3);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.plato-body { padding: 12px; }
+.sec-lbl {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sec-lbl:first-child { margin-top: 0; }
+.sec-lbl i { font-size: 13px; }
+
+/* ── FORM FIELDS ── */
+label { font-size: 11px; color: var(--text2); display: block; margin-bottom: 3px; }
+input[type=number], input[type=text], select {
+  width: 100%;
+  padding: 7px 10px;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+}
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 8px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; margin-bottom: 8px; }
+.field { margin-bottom: 8px; }
+
+/* ── MERMA FIELD ── */
+.merma-wrap { position: relative; }
+.merma-inp { padding-right: 48px !important; }
+.merma-tag {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  font-size: 9px; font-weight: 600; padding: 2px 5px; border-radius: 6px;
+  pointer-events: none; letter-spacing: .04em;
+}
+.merma-tag.auto { background: var(--accent-light); color: var(--accent); }
+.merma-tag.manual { background: var(--warn-light); color: var(--warn); }
+.merma-src { font-size: 10px; color: var(--text3); margin-top: 2px; font-style: italic; line-height: 1.3; }
+
+/* ── CHIPS ── */
+.chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.chip {
+  padding: 4px 10px; font-size: 12px;
+  border: 1px solid var(--border); border-radius: 20px;
+  cursor: pointer; background: var(--surface); color: var(--text2);
+  transition: all .12s;
+}
+.chip.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ── QUICK SELECT ── */
+.quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 8px; }
+.quick-btn {
+  padding: 8px 4px; font-size: 11px; text-align: center;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  cursor: pointer; background: var(--surface); color: var(--text2);
+  line-height: 1.3; transition: all .12s;
+}
+.quick-btn i { display: block; font-size: 16px; margin-bottom: 3px; color: var(--text3); }
+.quick-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+.quick-btn:hover i { color: var(--accent); }
+
+.sep { height: 1px; background: var(--border); margin: 10px 0; }
+
+.btn-tog {
+  width: 100%; padding: 7px; font-size: 12px;
+  background: transparent; border: 1px dashed var(--border);
+  border-radius: var(--radius-sm); color: var(--accent); cursor: pointer;
+  margin-top: 4px;
+}
+
+/* ── MAIN BUTTONS ── */
+.btn-primary {
+  width: 100%; padding: 12px; background: var(--accent);
+  color: #fff; border: none; border-radius: var(--radius);
+  font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary:active { transform: scale(.98); }
+.btn-add {
+  width: 100%; padding: 9px; font-size: 13px;
+  background: transparent; border: 1px dashed var(--border);
+  border-radius: var(--radius-sm); color: var(--text2); cursor: pointer; margin-top: 4px;
+}
+.btn-add:hover { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+
+/* ── RESULTADO ── */
+.resultado { margin-top: 12px; display: none; }
+.res-plato {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.res-plato-header {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.res-bloque { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+.res-bloque:last-child { border-bottom: none; }
+.res-bloque-title {
+  font-size: 10px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 7px;
+  display: flex; align-items: center; gap: 5px;
+}
+.res-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 4px 0; border-bottom: 1px solid var(--surface2);
+}
+.res-row:last-child { border-bottom: none; }
+.res-lbl { font-size: 12px; color: var(--text2); }
+.res-val { font-size: 13px; font-weight: 500; color: var(--text); }
+.res-val.big { font-size: 20px; font-weight: 600; color: var(--accent); font-family: 'DM Mono', monospace; }
+.res-val.warn { color: var(--warn); font-size: 12px; }
+.res-val.ok { color: var(--accent); font-size: 12px; }
+.res-val.danger { color: var(--red); }
+
+/* centros breakdown */
+.centros-breakdown { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.centro-pill {
+  padding: 3px 8px; border-radius: 10px; font-size: 10px; font-weight: 500;
+  font-family: 'DM Mono', monospace;
+}
+
+/* ── DASHBOARD ── */
+.metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.metric {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.metric .num { font-size: 26px; font-weight: 600; color: var(--accent); font-family: 'DM Mono', monospace; }
+.metric .lbl { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+.bar-row { margin-bottom: 8px; }
+.bar-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 3px; }
+.bar-track { background: var(--surface2); border-radius: 4px; height: 8px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width .4s; }
+
+.hist-item { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.hist-item:last-child { border-bottom: none; }
+.hist-top { display: flex; justify-content: space-between; align-items: center; }
+.hist-nom { font-size: 13px; font-weight: 500; }
+.hist-fecha { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; }
+.hist-det { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+.empty { text-align: center; padding: 28px 16px; color: var(--text3); font-size: 13px; }
+.empty i { font-size: 36px; display: block; margin-bottom: 8px; color: var(--border); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">
+    <i class="ti ti-building-hospital"></i>
+    CocinerHosp
+  </div>
+  <div class="topbar-fecha" id="fecha-top"></div>
+</div>
+
+<nav class="nav" style="grid-template-columns:repeat(4,1fr);">
+  <button class="nav-btn on" onclick="showScreen('calcular',this)">
+    <i class="ti ti-calculator"></i>Calcular
+  </button>
+  <button class="nav-btn" onclick="showScreen('blandas',this)">
+    <i class="ti ti-bowl-spoon"></i>Blandas
+  </button>
+  <button class="nav-btn" onclick="showScreen('registrar',this)">
+    <i class="ti ti-clipboard-list"></i>Registrar
+  </button>
+  <button class="nav-btn" onclick="showScreen('dashboard',this)">
+    <i class="ti ti-chart-bar"></i>Dashboard
+  </button>
+</nav>
+
+<!-- ══════════════ CALCULAR ══════════════ -->
+<div id="screen-calcular" class="screen on">
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-clock"></i>Servicio</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:12px;" id="srv-toggle">
+      <button id="srv-btn-almuerzo" onclick="setServicio('almuerzo')"
+        style="padding:11px 8px;text-align:center;cursor:pointer;border:none;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;background:var(--accent);color:#fff;border-radius:calc(var(--radius) - 2px);transition:all .2s;">
+        <i class="ti ti-sun" style="font-size:18px"></i> Almuerzo
+      </button>
+      <button id="srv-btn-cena" onclick="setServicio('cena')"
+        style="padding:11px 8px;text-align:center;cursor:pointer;border:none;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;background:transparent;color:var(--text2);transition:all .2s;">
+        <i class="ti ti-moon" style="font-size:18px"></i> Cena
+      </button>
+    </div>
+
+    <div id="centros-grid" class="centros-grid"></div>
+    <div id="total-bar" style="background:var(--accent);color:#fff;border-radius:var(--radius-sm);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+      <div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.75" id="total-srvlbl">Almuerzo</div>
+        <div style="font-size:12px;opacity:.8;">Total pacientes</div>
+        <div style="font-size:28px;font-weight:600;font-family:'DM Mono',monospace;" id="total-pac-num">414</div>
+      </div>
+      <i class="ti ti-users" style="font-size:28px;opacity:.5"></i>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-tools-kitchen-2"></i>Platos del servicio</div>
+    <div id="lista-platos"></div>
+    <button class="btn-add" onclick="addPlato()">
+      <i class="ti ti-plus" style="font-size:13px;vertical-align:-1px"></i> Añadir otro plato
+    </button>
+  </div>
+
+  <div class="card" id="calc-card" style="background:var(--accent-light);border-color:var(--accent);">
+    <button class="btn-primary" id="btn-calcular" onclick="calcular()" style="background:var(--accent);">
+      <i class="ti ti-calculator" style="font-size:16px"></i>
+      <span id="btn-calc-label">Calcular Almuerzo — 414 pac.</span>
+    </button>
+    <div id="resultado" class="resultado"></div>
+  </div>
+
+</div>
+
+<!-- ══════════════ REGISTRAR ══════════════ -->
+<div id="screen-registrar" class="screen">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-plus"></i>Guardar producción del día</div>
+    <div class="field">
+      <label>Plato elaborado</label>
+      <input type="text" id="r-plato" placeholder="Ej: Muslo de pollo con arroz">
+    </div>
+    <div class="g2">
+      <div>
+        <label>Raciones totales</label>
+        <input type="number" id="r-raciones" value="414" min="1">
+      </div>
+      <div>
+        <label>Servicio</label>
+        <select id="r-servicio">
+          <option>Almuerzo</option><option>Cena</option>
+          <option>Desayuno</option><option>Merienda</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="registrar()" style="margin-top:4px;">
+      <i class="ti ti-check" style="font-size:15px"></i> Guardar en historial
+    </button>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-clock"></i>Parte de hoy</div>
+    <div id="lista-hoy"></div>
+  </div>
+</div>
+
+<!-- ══════════════ DASHBOARD ══════════════ -->
+<div id="screen-dashboard" class="screen">
+  <div class="metrics">
+    <div class="metric"><div class="num" id="d-raciones">0</div><div class="lbl">Raciones este mes</div></div>
+    <div class="metric"><div class="num" id="d-elaboraciones">0</div><div class="lbl">Elaboraciones</div></div>
+    <div class="metric"><div class="num" id="d-dias">0</div><div class="lbl">Días con registro</div></div>
+    <div class="metric"><div class="num" id="d-media">0</div><div class="lbl">Media raciones/día</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-chart-bar"></i>Platos más elaborados</div>
+    <div id="d-barras"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-list"></i>Últimos registros</div>
+    <div id="d-historial"></div>
+  </div>
+</div>
+
+<!-- ══════════════ DIETAS BLANDAS ══════════════ -->
+<div id="screen-blandas" class="screen">
+
+  <div class="card" style="background:#F0F4FF;border-color:#1E3A5F;">
+    <div style="font-size:14px;font-weight:600;color:#1E3A5F;margin-bottom:4px;display:flex;align-items:center;gap:7px;">
+      <i class="ti ti-bowl-spoon" style="font-size:17px;"></i>Producción fija diaria — Dietas Blandas
+    </div>
+    <div style="font-size:12px;color:var(--text2);">Barqueta 3 kg · Bolsa congelada 2.5 kg · Producción constante</div>
+  </div>
+
+  <!-- CHINOS -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-droplet" style="color:#1E3A5F;"></i>Chinos — 22 barquetas · 66 kg</div>
+
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Cada tipo produce su lote independiente. Total bolsas entre los 3 tipos: <strong>13 bolsas</strong></div>
+
+    <!-- Zanahoria -->
+    <div style="border:1px solid #FED7AA;border-radius:var(--radius-sm);overflow:hidden;margin-bottom:8px;">
+      <div style="background:#FED7AA;padding:8px 12px;font-size:13px;font-weight:600;color:#92400E;display:flex;align-items:center;gap:6px;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#E07B39;display:inline-block;flex-shrink:0;"></span>
+        Chino de Zanahoria
+      </div>
+      <div style="padding:10px 12px;">
+        <div class="res-row"><span class="res-lbl">Papas congeladas</span><span class="res-val"><strong>2 bolsas</strong> = 5 kg bruto</span></div>
+        <div class="res-row"><span class="res-lbl">Zanahoria congelada</span><span class="res-val"><strong>2 bolsas</strong> = 5 kg bruto</span></div>
+        <div class="res-row"><span class="res-lbl">Total bruto</span><span class="res-val"><strong>10 kg</strong> (4 bolsas)</span></div>
+        <div class="res-row" style="border-bottom:none;"><span class="res-lbl">Rinde aprox. triturado</span><span class="res-val" style="color:var(--accent);">~8.5 kg (merma 15%)</span></div>
+      </div>
+    </div>
+
+    <!-- Calabaza -->
+    <div style="border:1px solid #FDE68A;border-radius:var(--radius-sm);overflow:hidden;margin-bottom:8px;">
+      <div style="background:#FDE68A;padding:8px 12px;font-size:13px;font-weight:600;color:#78350F;display:flex;align-items:center;gap:6px;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#F59E0B;display:inline-block;flex-shrink:0;"></span>
+        Chino de Calabaza
+      </div>
+      <div style="padding:10px 12px;">
+        <div class="res-row"><span class="res-lbl">Papas congeladas</span><span class="res-val"><strong>2 bolsas</strong> = 5 kg bruto</span></div>
+        <div class="res-row"><span class="res-lbl">Calabaza congelada</span><span class="res-val"><strong>2 bolsas</strong> = 5 kg bruto</span></div>
+        <div class="res-row"><span class="res-lbl">Total bruto</span><span class="res-val"><strong>10 kg</strong> (4 bolsas)</span></div>
+        <div class="res-row" style="border-bottom:none;"><span class="res-lbl">Rinde aprox. triturado</span><span class="res-val" style="color:var(--accent);">~8.5 kg (merma 15%)</span></div>
+      </div>
+    </div>
+
+    <!-- Calabacín -->
+    <div style="border:1px solid #BBF7D0;border-radius:var(--radius-sm);overflow:hidden;">
+      <div style="background:#BBF7D0;padding:8px 12px;font-size:13px;font-weight:600;color:#14532D;display:flex;align-items:center;gap:6px;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#65A30D;display:inline-block;flex-shrink:0;"></span>
+        Chino de Calabacín
+      </div>
+      <div style="padding:10px 12px;">
+        <div class="res-row"><span class="res-lbl">Papas congeladas</span><span class="res-val"><strong>3 bolsas</strong> = 7.5 kg bruto</span></div>
+        <div class="res-row"><span class="res-lbl">Calabacín congelado</span><span class="res-val"><strong>2 bolsas</strong> = 5 kg bruto</span></div>
+        <div class="res-row"><span class="res-lbl">Total bruto</span><span class="res-val"><strong>12.5 kg</strong> (5 bolsas)</span></div>
+        <div class="res-row" style="border-bottom:none;"><span class="res-lbl">Rinde aprox. triturado</span><span class="res-val" style="color:var(--accent);">~10 kg (merma ~20%)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOLIDO -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-flame" style="color:#B45309;"></i>Molido (caldo espesado) — 20 barquetas · 60 kg</div>
+    <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+      <div style="background:#FEF3C7;padding:8px 12px;font-size:12px;font-weight:600;color:#78350F;">Ingredientes base del caldo</div>
+      <div style="padding:10px 12px;">
+        <div class="res-row"><span class="res-lbl">Calabacín congelado</span><span class="res-val"><strong>2 bolsas</strong> = 5 kg</span></div>
+        <div class="res-row"><span class="res-lbl">Zanahoria congelada</span><span class="res-val"><strong>1 bolsa</strong> = 2.5 kg</span></div>
+        <div class="res-row"><span class="res-lbl">Cebolla fresca</span><span class="res-val">~1 kg</span></div>
+        <div class="res-row"><span class="res-lbl">Pimiento fresco</span><span class="res-val">~1 kg</span></div>
+        <div class="res-row"><span class="res-lbl">Ajo</span><span class="res-val">~100 g</span></div>
+        <div class="res-row"><span class="res-lbl">Cilantro</span><span class="res-val">~50 g</span></div>
+        <div class="res-row"><span class="res-lbl">Fécula de maíz</span><span class="res-val">~400 g (para espesar)</span></div>
+        <div class="res-row"><span class="res-lbl">Caldo / agua</span><span class="res-val">hasta completar 60 kg</span></div>
+      </div>
+      <div style="background:#FEF3C7;padding:8px 12px;font-size:12px;font-weight:600;color:#78350F;">Proteína (varía según existencia)</div>
+      <div style="padding:10px 12px;">
+        <div class="res-row"><span class="res-lbl">Si es <strong>pollo</strong> (30% merma)</span><span class="res-val" style="color:var(--warn);">~8.6 kg bruto → 6 kg cocido</span></div>
+        <div class="res-row" style="border-bottom:none;"><span class="res-lbl">Si es <strong>cerdo</strong> (18% merma)</span><span class="res-val" style="color:var(--warn);">~7.3 kg bruto → 6 kg cocido</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PURÉ -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-circle-dot" style="color:#6B3FA0;"></i>Puré de papas — 22 barquetas · 66 kg</div>
+    <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+      <div style="background:#EDE9FE;padding:8px 12px;font-size:12px;font-weight:600;color:#4C1D95;">Ingredientes</div>
+      <div style="padding:10px 12px;">
+        <div class="res-row"><span class="res-lbl">Papas congeladas (2.5 kg/bolsa)</span><span class="res-val big" style="font-size:20px;color:#6B3FA0;"><strong>32 bolsas</strong></span></div>
+        <div class="res-row"><span class="res-lbl">Bruto total</span><span class="res-val">80 kg</span></div>
+        <div class="res-row"><span class="res-lbl">Merma cocción (~15%)</span><span class="res-val" style="color:var(--warn);">−12 kg</span></div>
+        <div class="res-row"><span class="res-lbl">Papa cocida disponible</span><span class="res-val">~68 kg ✓</span></div>
+        <div class="res-row"><span class="res-lbl">Agua de cocción</span><span class="res-val">usar la propia para textura</span></div>
+        <div class="res-row"><span class="res-lbl">Sal</span><span class="res-val">al gusto</span></div>
+        <div class="res-row" style="border-bottom:none;"><span class="res-lbl">Aceite</span><span class="res-val">~300–400 ml</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN BOLSAS -->
+  <div class="card" style="background:#F0F4FF;border-color:#1E3A5F;">
+    <div style="font-size:14px;font-weight:600;color:#1E3A5F;margin-bottom:10px;display:flex;align-items:center;gap:7px;">
+      <i class="ti ti-list-check" style="font-size:17px;"></i>Resumen total de bolsas congeladas
+    </div>
+    <div style="border:1px solid #BFD0F0;border-radius:var(--radius-sm);overflow:hidden;">
+      <div style="padding:10px 12px;">
+        <div class="res-row"><span class="res-lbl">Papas (chino zanahoria)</span><span class="res-val">2 bolsas</span></div>
+        <div class="res-row"><span class="res-lbl">Papas (chino calabaza)</span><span class="res-val">2 bolsas</span></div>
+        <div class="res-row"><span class="res-lbl">Papas (chino calabacín)</span><span class="res-val">3 bolsas</span></div>
+        <div class="res-row"><span class="res-lbl">Papas (puré)</span><span class="res-val">32 bolsas</span></div>
+        <div class="res-row" style="background:var(--accent-light);"><span class="res-lbl" style="font-weight:600;">Total bolsas de papas</span><span class="res-val big" style="color:var(--accent);font-size:20px;">39 bolsas</span></div>
+        <div class="res-row" style="margin-top:4px;"><span class="res-lbl">Zanahoria (chino + molido)</span><span class="res-val">3 bolsas</span></div>
+        <div class="res-row"><span class="res-lbl">Calabaza</span><span class="res-val">2 bolsas</span></div>
+        <div class="res-row"><span class="res-lbl">Calabacín (chino + molido)</span><span class="res-val">4 bolsas</span></div>
+        <div class="res-row" style="border-bottom:none;background:#EDE9FE;"><span class="res-lbl" style="font-weight:600;">Total bolsas verduras</span><span class="res-val big" style="color:#6B3FA0;font-size:20px;">9 bolsas</span></div>
+      </div>
+    </div>
+    <div style="margin-top:10px;background:var(--accent);color:#fff;border-radius:var(--radius-sm);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-size:13px;font-weight:600;">TOTAL BOLSAS DÍA</div>
+      <div style="font-size:26px;font-weight:600;font-family:'DM Mono',monospace;">48 bolsas</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══ DATOS CENTROS — ALMUERZO Y CENA ══
+var CENTROS = [
+  {id:'sur',       nombre:'Sur',        color:'#1B5E3F', almuerzo:120, cena:120},
+  {id:'candelaria',nombre:'Candelaria', color:'#1E3A5F', almuerzo:120, cena:30},
+  {id:'parque',    nombre:'Parque',     color:'#6B3FA0', almuerzo:50,  cena:50},
+  {id:'centro',    nombre:'Centro',     color:'#8B4513', almuerzo:100, cena:100},
+  {id:'hogarb',    nombre:'Hogar B',    color:'#B45309', almuerzo:12,  cena:12},
+  {id:'hogara',    nombre:'Hogar A',    color:'#991B1B', almuerzo:12,  cena:12},
+];
+var servicioActual = 'almuerzo';
+
+// ══ TABLA DE MERMAS (fuentes profesionales) ══
+var MERMAS = [
+  // PROTEÍNAS
+  {k:['muslo pollo','muslo de pollo','pernil'],  prot:30, src:'Muslo/pernil horno ~30% (tabla mermas hospitalaria)'},
+  {k:['contramuslo','contra muslo'],             prot:26, src:'Contramuslo horno ~26% (tabla mermas aves)'},
+  {k:['pescado','merluza','dorada','lubina','filete pescado'], prot:20, src:'Pescado blanco horno ~20% (ChefBusiness)'},
+  {k:['albondiga','albóndiga','albóndigas'],     prot:20, src:'Carne picada cocida ~20% (ChefBusiness)'},
+  {k:['hamburguesa','carne hamburguesa','carne de hamburguesa'], prot:25, src:'Carne picada plancha ~25% (Studocu)'},
+  {k:['quiche','quiché','huevo','tortilla'],     prot:10, src:'Elaboración con huevo/queso ~10% (evaporación horno)'},
+  {k:['pechuga pollo','filete pollo'],           prot:37, src:'Pechuga pollo cocida ~37% (Studocu)'},
+  {k:['cerdo','lomo'],                           prot:18, src:'Cerdo magro ~18% (Studocu)'},
+  {k:['ternera','vacuno'],                       prot:27, src:'Vacuno ~27% (Studocu)'},
+  // GUARNICIONES
+  {k:['arroz'],                                  guar:-200, src:'Arroz: absorbe agua, triplica peso (factor ×3)'},
+  {k:['macarron','macarrón','macarrones','pasta','espagueti','fideo','tallarín'],guar:-150, src:'Pasta seca cocida: aumenta ~2.5× el peso (absorción agua)'},
+  {k:['habichuela','habichuelas','judía verde','judias verdes','judías'], guar:22, src:'Judías/habichuelas congeladas ~22% (KitchenNmbrs)'},
+  {k:['coliflor'],                               guar:25, src:'Coliflor congelada ~20-25% (tabla mermas)'},
+  {k:['brocoli','brócoli'],                      guar:40, src:'Brócoli cocido ~35-45% (KitchenNmbrs profesional)'},
+  {k:['menestra'],                               guar:22, src:'Menestra congelada ~20-25% (tabla mermas)'},
+  {k:['zanahoria'],                              guar:20, src:'Zanahoria cocida ~20% (tabla mermas gastronomía)'},
+  {k:['col bruselas','coles de bruselas','col de bruselas','coles brúselas'], guar:18, src:'Col de Bruselas congelada ~15-20%'},
+  {k:['papa dolar','papas dolar','patatas dolar','papa dólar','papas dólar'], guar:12, src:'Patata precocida/dólar congelada ~10-15%'},
+  {k:['pure','puré','pure de papa','puré de patata'],                         guar:5, src:'Puré sobre/bolsa: merma mínima ~5%'},
+  {k:['patata frita','papa frita','patatas fritas','papas fritas'],           guar:15, src:'Patata frita congelada ~15% (KitchenNmbrs)'},
+  {k:['patata','papa'],                          guar:15, src:'Patata cocida ~15% (KitchenNmbrs)'},
+  {k:['espinaca','espinacas'],                   guar:35, src:'Espinacas cocidas ~35% (tabla mermas)'},
+  {k:['acelga'],                                 guar:40, src:'Acelga cocida ~40% (tabla mermas)'},
+  {k:['champiñon','seta'],                       guar:35, src:'Champiñón salteado ~30-40%'},
+  {k:['pimiento'],                               guar:18, src:'Pimiento asado ~15-20%'},
+];
+
+function getMerma(texto, tipo){
+  // tipo: 'prot' o 'guar'
+  if(!texto) return null;
+  var t = texto.toLowerCase();
+  for(var i=0;i<MERMAS.length;i++){
+    var m = MERMAS[i];
+    for(var j=0;j<m.k.length;j++){
+      if(t.indexOf(m.k[j]) > -1){
+        if(tipo==='prot' && m.prot !== undefined) return m;
+        if(tipo==='guar' && m.guar !== undefined) return m;
+      }
+    }
+  }
+  return null;
+}
+
+// ══ QUICK PRESETS ══
+var PROT_PRESETS = [
+  {nom:'Muslo pollo',    caja:20, racion:2, unidad:'muslos'},
+  {nom:'Contramuslo',    caja:20, racion:1, unidad:'contramuslos'},
+  {nom:'Pescado',        caja:10, racion:1, unidad:'filetes'},
+  {nom:'Albóndigas',     caja:52, racion:5, unidad:'albóndigas'},
+  {nom:'Hamburguesa',    caja:52, racion:1, unidad:'carnes'},
+  {nom:'Quiché',         caja:0,  racion:0, unidad:'porciones'},
+];
+var GUAR_PRESETS = ['Arroz','Macarrones','Habichuelas','Coliflor','Brócoli','Menestra','Zanahoria','Col Bruselas','Papas dólar','Puré de papa'];
+
+// ══ SERVICIO TOGGLE ══
+function setServicio(srv){
+  servicioActual = srv;
+  var isAlmuerzo = srv === 'almuerzo';
+  var color = isAlmuerzo ? 'var(--accent)' : '#1E3A5F';
+  var colorLight = isAlmuerzo ? 'var(--accent-light)' : '#EFF6FF';
+  var ba = document.getElementById('srv-btn-almuerzo');
+  var bc = document.getElementById('srv-btn-cena');
+  ba.style.background = isAlmuerzo ? 'var(--accent)' : 'transparent';
+  ba.style.color = isAlmuerzo ? '#fff' : 'var(--text2)';
+  bc.style.background = !isAlmuerzo ? '#1E3A5F' : 'transparent';
+  bc.style.color = !isAlmuerzo ? '#fff' : 'var(--text2)';
+  document.getElementById('total-bar').style.background = color;
+  document.getElementById('total-srvlbl').textContent = isAlmuerzo ? 'Almuerzo' : 'Cena';
+  document.getElementById('calc-card').style.background = colorLight;
+  document.getElementById('calc-card').style.borderColor = color;
+  document.getElementById('btn-calcular').style.background = color;
+  CENTROS.forEach(function(c){
+    var el = document.getElementById('pac-'+c.id);
+    if(el) el.value = c[srv];
+  });
+  updateTotal();
+}
+
+// ══ CENTROS ══
+function initCentros(){
+  var g = document.getElementById('centros-grid');
+  g.innerHTML = CENTROS.map(function(c){
+    return '<div class="centro-item">'
+      +'<div class="centro-label">'
+      +'<div class="centro-dot" style="background:'+c.color+'"></div>'
+      +c.nombre+'</div>'
+      +'<input class="centro-input" type="number" id="pac-'+c.id+'" value="'+c.almuerzo+'" min="0" oninput="updateTotal()">'
+      +'</div>';
+  }).join('');
+  updateTotal();
+}
+
+function updateTotal(){
+  var t = CENTROS.reduce(function(a,c){
+    return a + (parseInt(document.getElementById('pac-'+c.id).value)||0);
+  },0);
+  document.getElementById('total-pac-num').textContent = t;
+  var srvNom = servicioActual==='almuerzo'?'Almuerzo':'Cena';
+  var bl = document.getElementById('btn-calc-label');
+  if(bl) bl.textContent = 'Calcular '+srvNom+' — '+t+' pac.';
+  return t;
+}
+
+function getPacientes(){
+  return CENTROS.map(function(c){
+    return {id:c.id, nombre:c.nombre, color:c.color, pax: parseInt(document.getElementById('pac-'+c.id).value)||0};
+  });
+}
+
+// ══ PLATOS ══
+var platos = [];
+var uid = 0;
+
+function mermaField(id, pfx, defVal, tipo){
+  return '<div class="merma-wrap">'
+    +'<input type="number" id="'+pfx+'merma-'+id+'" value="'+defVal+'" min="-300" max="80" class="merma-inp" '
+    +'oninput="document.getElementById(\''+pfx+'mtag-'+id+'\').textContent=\'manual\';'
+    +'document.getElementById(\''+pfx+'mtag-'+id+'\').className=\'merma-tag manual\'">'
+    +'<span class="merma-tag auto" id="'+pfx+'mtag-'+id+'">auto</span>'
+    +'</div>'
+    +'<div class="merma-src" id="'+pfx+'msrc-'+id+'">Escribe el nombre para autocompletar</div>';
+}
+
+function guarSection(id, num, nom, bolsa, grams){
+  var defM = num===1?20:15;
+  return '<div class="sec-lbl"><i class="ti ti-snowflake"></i>Guarnición '+num+'</div>'
+    +'<div class="field"><label>Nombre</label>'
+    +'<input type="text" id="g'+num+'nom-'+id+'" placeholder="Ej: Habichuelas, Arroz..." value="'+nom+'" '
+    +'oninput="autoMermaGuar(\''+id+'\','+num+')">'
+    +'</div>'
+    +'<div class="g3">'
+    +'<div><label>Bolsa (kg)</label><input type="number" id="g'+num+'bolsa-'+id+'" value="'+bolsa+'" min="0.1" step="0.5"></div>'
+    +'<div><label>Merma %</label>'+mermaField(id,'g'+num,defM,'guar')+'</div>'
+    +'<div><label>g netos/rac.</label><input type="number" id="g'+num+'g-'+id+'" value="'+grams+'" min="1"></div>'
+    +'</div>';
+}
+
+function addPlato(preset){
+  var id = 'pl'+(uid++);
+  platos.push(id);
+  var p = preset || {nom:'',caja:52,racion:1,unidad:'piezas',
+    g1nom:'',g1bolsa:2.5,g1g:120,
+    g2active:false,g2nom:'',g2bolsa:2.5,g2g:60};
+
+  var el = document.getElementById('lista-platos');
+  var div = document.createElement('div');
+  div.className='plato-item'; div.id='item-'+id;
+
+  div.innerHTML =
+    '<div class="plato-header">'
+    +'<input class="plato-name" type="text" id="pnom-'+id+'" placeholder="Nombre del plato" value="'+p.nom+'" '
+    +'oninput="autoMermaProt(\''+id+'\')">'
+    +'<button class="btn-del" onclick="delPlato(\''+id+'\')"><i class="ti ti-x"></i></button>'
+    +'</div>'
+    +'<div class="plato-body">'
+
+    // Quick preset proteína
+    +'<div class="sec-lbl"><i class="ti ti-meat"></i>Proteína — selección rápida</div>'
+    +'<div class="quick-grid">'
+    + PROT_PRESETS.map(function(pp){
+        return '<button class="quick-btn" onclick="applyProtPreset(\''+id+'\','+JSON.stringify(pp).replace(/'/g,"\\'")+')"><i class="ti ti-meat"></i>'+pp.nom+'</button>';
+      }).join('')
+    +'</div>'
+
+    +'<div class="g3">'
+    +'<div><label>Unid./caja</label><input type="number" id="pcaja-'+id+'" value="'+p.caja+'" min="1"></div>'
+    +'<div><label>Unid./ración</label><input type="number" id="pracion-'+id+'" value="'+p.racion+'" min="1"></div>'
+    +'<div><label>Nombre unidad</label><input type="text" id="punidad-'+id+'" value="'+p.unidad+'"></div>'
+    +'</div>'
+    +'<div class="field"><label>Merma proteína %</label>'+mermaField(id,'p',25,'prot')+'</div>'
+
+    +'<div class="sep"></div>'
+
+    // Quick preset guarnición
+    +'<div class="sec-lbl"><i class="ti ti-snowflake"></i>Guarnición — selección rápida</div>'
+    +'<div class="chips" id="gchips-'+id+'">'
+    + GUAR_PRESETS.map(function(g){
+        return '<div class="chip" onclick="applyGuarPreset(\''+id+'\',1,\''+g+'\')">'+g+'</div>';
+      }).join('')
+    +'</div>'
+
+    + guarSection(id,1,p.g1nom,p.g1bolsa,p.g1g)
+
+    +'<div id="g2bloque-'+id+'" style="display:'+(p.g2active?'block':'none')+'">'
+    +'<div class="sep"></div>'
+    + guarSection(id,2,p.g2nom,p.g2bolsa,p.g2g)
+    +'</div>'
+    +'<button class="btn-tog" id="btog-'+id+'" onclick="togG2(\''+id+'\')">'+
+      '<i class="ti ti-'+(p.g2active?'minus':'plus')+'" style="font-size:12px;vertical-align:-1px"></i> '
+      +(p.g2active?'Quitar segunda guarnición':'+ Añadir segunda guarnición')
+    +'</button>'
+    +'</div>';
+
+  el.appendChild(div);
+  if(p.nom){ autoMermaProt(id); }
+  if(p.g1nom){ autoMermaGuar(id,1); }
+  if(p.g2nom){ autoMermaGuar(id,2); }
+}
+
+function applyProtPreset(id, pp){
+  document.getElementById('pnom-'+id).value = pp.nom;
+  if(pp.caja>0) document.getElementById('pcaja-'+id).value = pp.caja;
+  if(pp.racion>0) document.getElementById('pracion-'+id).value = pp.racion;
+  document.getElementById('punidad-'+id).value = pp.unidad;
+  autoMermaProt(id);
+}
+
+function applyGuarPreset(id, num, nom){
+  document.getElementById('g'+num+'nom-'+id).value = nom;
+  autoMermaGuar(id, num);
+  // unselect all chips, mark selected
+  document.querySelectorAll('#gchips-'+id+' .chip').forEach(function(c){c.classList.remove('on');});
+  var chips = document.querySelectorAll('#gchips-'+id+' .chip');
+  chips.forEach(function(c){ if(c.textContent===nom) c.classList.add('on'); });
+}
+
+function autoMermaProt(id){
+  var nom = document.getElementById('pnom-'+id).value;
+  var m = getMerma(nom,'prot');
+  var inp = document.getElementById('pmerma-'+id);
+  var tag = document.getElementById('pmtag-'+id);
+  var src = document.getElementById('pmsrc-'+id);
+  if(m){
+    inp.value = m.prot;
+    tag.textContent='auto'; tag.className='merma-tag auto';
+    src.textContent = m.src;
+  } else {
+    tag.textContent='manual'; tag.className='merma-tag manual';
+    src.textContent='Sin dato automático — ajusta manualmente';
+  }
+}
+
+function autoMermaGuar(id, num){
+  var nom = document.getElementById('g'+num+'nom-'+id).value;
+  var m = getMerma(nom,'guar');
+  var inp = document.getElementById('g'+num+'merma-'+id);
+  var tag = document.getElementById('g'+num+'mtag-'+id);
+  var src = document.getElementById('g'+num+'msrc-'+id);
+  if(m){
+    inp.value = m.guar;
+    tag.textContent='auto'; tag.className='merma-tag auto';
+    src.textContent = m.src;
+  } else {
+    tag.textContent='manual'; tag.className='merma-tag manual';
+    src.textContent='Sin dato automático — ajusta manualmente';
+  }
+}
+
+function togG2(id){
+  var b = document.getElementById('g2bloque-'+id);
+  var btn = document.getElementById('btog-'+id);
+  var vis = b.style.display!=='none';
+  b.style.display = vis?'none':'block';
+  btn.innerHTML = '<i class="ti ti-'+(vis?'plus':'minus')+'" style="font-size:12px;vertical-align:-1px"></i> '
+    +(vis?'+ Añadir segunda guarnición':'Quitar segunda guarnición');
+}
+
+function delPlato(id){
+  platos = platos.filter(function(x){return x!==id;});
+  var el = document.getElementById('item-'+id); if(el) el.remove();
+}
+
+// ══ CÁLCULO GUARNICIÓN ══
+function calcGuar(total, bolsaKg, mermaP, racionG){
+  var merma = mermaP/100;
+  var bolsaG = bolsaKg * 1000;
+  var netoNec = racionG * total;
+  var brutoNec, netoReal, bolsas, sobrante;
+  if(merma < 0){
+    // absorción (arroz, pasta)
+    var factor = 1 + Math.abs(merma);
+    brutoNec = netoNec / factor;
+    bolsas = Math.ceil(brutoNec / bolsaG);
+    var brutoReal = bolsas * bolsaG;
+    netoReal = brutoReal * factor;
+  } else {
+    brutoNec = netoNec / (1 - merma);
+    bolsas = Math.ceil(brutoNec / bolsaG);
+    var brutoReal2 = bolsas * bolsaG;
+    netoReal = brutoReal2 * (1 - merma);
+    brutoNec = brutoReal2;
+  }
+  sobrante = netoReal - netoNec;
+  return {netoNec:netoNec, brutoNec:brutoNec, netoReal:netoReal, bolsas:bolsas, sobrante:sobrante, mermaP:mermaP};
+}
+
+function renderGuarBloque(titulo, nom, res, racionG, total, bolsaKg){
+  var absorcion = res.mermaP < 0;
+  var mermaLabel = absorcion
+    ? 'Peso en seco (absorbe ×'+Math.round(1+Math.abs(res.mermaP)/100)+')'
+    : 'Merma '+res.mermaP+'%';
+  return '<div class="res-bloque">'
+    +'<div class="res-bloque-title"><i class="ti ti-snowflake"></i>'+titulo+': '+nom+'</div>'
+    +'<div class="res-row"><span class="res-lbl">Bolsas a abrir ('+bolsaKg+'kg)</span>'
+    +'<span class="res-val big">'+res.bolsas+'</span></div>'
+    +'<div class="res-row"><span class="res-lbl">'+mermaLabel+'</span>'
+    +'<span class="res-val">'+(res.brutoNec/1000).toFixed(2)+' kg</span></div>'
+    +'<div class="res-row"><span class="res-lbl">Neto listo → '+racionG+'g × '+total+' pac.</span>'
+    +'<span class="res-val">'+(res.netoReal/1000).toFixed(2)+' kg</span></div>'
+    +'<div class="res-row"><span class="res-lbl">Sobrante estimado</span>'
+    +'<span class="res-val '+(res.sobrante>0?'warn':'ok')+'">+'+Math.round(res.sobrante)+'g → '+Math.floor(res.sobrante/racionG)+' rac. extra</span></div>'
+    +'</div>';
+}
+
+// ══ CALCULAR TODO ══
+function calcular(){
+  var centros = getPacientes();
+  var total = centros.reduce(function(a,c){return a+c.pax;},0);
+  if(!total){ alert('Introduce el número de pacientes'); return; }
+  if(!platos.length){ alert('Añade al menos un plato'); return; }
+
+  var srvNom = servicioActual==='almuerzo'?'Almuerzo':'Cena';
+  var srvColor = servicioActual==='almuerzo'?'var(--accent)':'#1E3A5F';
+  var html = '';
+
+  platos.forEach(function(id){
+    var nom = document.getElementById('pnom-'+id).value || 'Plato';
+    var pCaja = parseInt(document.getElementById('pcaja-'+id).value)||1;
+    var pRacion = parseInt(document.getElementById('pracion-'+id).value)||1;
+    var pUnidad = document.getElementById('punidad-'+id).value||'unidades';
+    var pMerma = parseFloat(document.getElementById('pmerma-'+id).value)||0;
+
+    var pTotal = pRacion * total;
+    var pCajas = Math.ceil(pTotal / pCaja);
+    var pReal = pCajas * pCaja;
+    var pSobra = pReal - pTotal;
+    var pSobraRac = Math.floor(pSobra / pRacion);
+
+    // Desglose por centro
+    var centrosPills = centros.map(function(c){
+      if(!c.pax) return '';
+      var unidades = pRacion * c.pax;
+      return '<span class="centro-pill" style="background:'+c.color+'22;color:'+c.color+'">'
+        +c.nombre+': '+unidades+' '+pUnidad+'</span>';
+    }).join('');
+
+    // Guarnición 1
+    var g1Nom = document.getElementById('g1nom-'+id).value||'Guarnición';
+    var g1Bolsa = parseFloat(document.getElementById('g1bolsa-'+id).value)||2.5;
+    var g1Merma = parseFloat(document.getElementById('g1merma-'+id).value)||20;
+    var g1G = parseFloat(document.getElementById('g1g-'+id).value)||120;
+    var g1 = calcGuar(total, g1Bolsa, g1Merma, g1G);
+
+    // Guarnición 2
+    var g2vis = document.getElementById('g2bloque-'+id).style.display!=='none';
+    var g2html = '';
+    if(g2vis){
+      var g2Nom = document.getElementById('g2nom-'+id).value||'Guarnición 2';
+      var g2Bolsa = parseFloat(document.getElementById('g2bolsa-'+id).value)||2.5;
+      var g2Merma = parseFloat(document.getElementById('g2merma-'+id).value)||15;
+      var g2G = parseFloat(document.getElementById('g2g-'+id).value)||60;
+      var g2 = calcGuar(total, g2Bolsa, g2Merma, g2G);
+      g2html = renderGuarBloque('Guarnición 2', g2Nom, g2, g2G, total, g2Bolsa);
+    }
+
+    html +=
+      '<div class="res-plato">'
+      +'<div class="res-plato-header" style="background:'+srvColor+'">'
+      +'<i class="ti ti-tools-kitchen-2"></i>'+nom+' — '+srvNom+'</div>'
+
+      // Proteína
+      +'<div class="res-bloque">'
+      +'<div class="res-bloque-title"><i class="ti ti-meat"></i>Proteína</div>'
+      +'<div class="res-row"><span class="res-lbl">Cajas a abrir</span>'
+      +'<span class="res-val big">'+pCajas+'</span></div>'
+      +'<div class="res-row"><span class="res-lbl">'+pUnidad+' en esas cajas</span>'
+      +'<span class="res-val">'+pReal+'</span></div>'
+      +'<div class="res-row"><span class="res-lbl">Necesarias ('+pRacion+' × '+total+' pac.)</span>'
+      +'<span class="res-val">'+pTotal+'</span></div>'
+      +(pMerma>0?
+        '<div class="res-row"><span class="res-lbl">Merma estimada ('+pMerma+'%)</span>'
+        +'<span class="res-val warn">−'+Math.round(pTotal*pMerma/100)+' uds peso / ajustar carga</span></div>':''
+      )
+      +'<div class="res-row"><span class="res-lbl">Sobrante</span>'
+      +'<span class="res-val '+(pSobra===0?'ok':'warn')+'">'+pSobra+' '+pUnidad
+      +(pSobra===0?' ✓':' → '+pSobraRac+' rac. extra')+'</span></div>'
+      +'<div style="margin-top:6px;"><div class="merma-src" style="margin-bottom:4px;">Desglose por centro:</div>'
+      +'<div class="centros-breakdown">'+centrosPills+'</div></div>'
+      +'</div>'
+
+      // Guarnición 1
+      + renderGuarBloque('Guarnición 1', g1Nom, g1, g1G, total, g1Bolsa)
+      + g2html
+      +'</div>';
+  });
+
+  var el = document.getElementById('resultado');
+  el.innerHTML = html;
+  el.style.display = 'block';
+  el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ══ REGISTRAR ══
+var historial = [];
+try{ historial = JSON.parse(localStorage.getItem('cocinaHosp')||'[]'); }catch(e){}
+
+function registrar(){
+  var plato = document.getElementById('r-plato').value.trim();
+  if(!plato){ alert('Escribe el nombre del plato'); return; }
+  var reg = {
+    plato: plato,
+    raciones: parseInt(document.getElementById('r-raciones').value)||0,
+    servicio: document.getElementById('r-servicio').value,
+    hora: new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}),
+    fecha: new Date().toISOString().slice(0,10)
+  };
+  historial.unshift(reg);
+  try{ localStorage.setItem('cocinaHosp', JSON.stringify(historial.slice(0,500))); }catch(e){}
+  document.getElementById('r-plato').value = '';
+  renderHoy();
+}
+
+function renderHoy(){
+  var hoy = new Date().toISOString().slice(0,10);
+  var hoyRegs = historial.filter(function(r){ return r.fecha===hoy; });
+  var el = document.getElementById('lista-hoy');
+  if(!hoyRegs.length){
+    el.innerHTML='<div class="empty"><i class="ti ti-clipboard"></i>Sin registros hoy aún</div>';
+    return;
+  }
+  el.innerHTML = hoyRegs.map(function(r){
+    return '<div class="hist-item">'
+      +'<div class="hist-top"><span class="hist-nom">'+r.plato+'</span>'
+      +'<span class="hist-fecha">'+r.hora+' · '+r.servicio+'</span></div>'
+      +'<div class="hist-det">'+r.raciones+' raciones</div>'
+      +'</div>';
+  }).join('');
+}
+
+// ══ DASHBOARD ══
+function renderDashboard(){
+  var mes = new Date().toISOString().slice(0,7);
+  var mesRegs = historial.filter(function(r){ return r.fecha&&r.fecha.startsWith(mes); });
+  var totalRac = mesRegs.reduce(function(a,r){return a+r.raciones;},0);
+  var dias = new Set(mesRegs.map(function(r){return r.fecha;})).size||1;
+
+  document.getElementById('d-raciones').textContent = totalRac;
+  document.getElementById('d-elaboraciones').textContent = mesRegs.length;
+  document.getElementById('d-dias').textContent = dias;
+  document.getElementById('d-media').textContent = Math.round(totalRac/dias);
+
+  // Platos
+  var conteo = {};
+  mesRegs.forEach(function(r){ conteo[r.plato]=(conteo[r.plato]||0)+r.raciones; });
+  var keys = Object.keys(conteo).sort(function(a,b){return conteo[b]-conteo[a];}).slice(0,6);
+  var maxV = keys.length ? conteo[keys[0]] : 1;
+  var barras = document.getElementById('d-barras');
+  if(!keys.length){
+    barras.innerHTML='<div class="empty"><i class="ti ti-chart-bar"></i>Sin datos este mes</div>';
+  } else {
+    barras.innerHTML = keys.map(function(k){
+      var pct = Math.round(conteo[k]/maxV*100);
+      return '<div class="bar-row">'
+        +'<div class="bar-meta"><span>'+k+'</span><span>'+conteo[k]+' rac.</span></div>'
+        +'<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:var(--accent)"></div></div>'
+        +'</div>';
+    }).join('');
+  }
+
+  var histEl = document.getElementById('d-historial');
+  var recent = historial.slice(0,8);
+  if(!recent.length){
+    histEl.innerHTML='<div class="empty"><i class="ti ti-list"></i>Sin registros aún</div>';
+  } else {
+    histEl.innerHTML = recent.map(function(r){
+      return '<div class="hist-item">'
+        +'<div class="hist-top"><span class="hist-nom">'+r.plato+'</span>'
+        +'<span class="hist-fecha">'+r.fecha+'</span></div>'
+        +'<div class="hist-det">'+r.raciones+' raciones · '+r.servicio+'</div>'
+        +'</div>';
+    }).join('');
+  }
+}
+
+// ══ NAV ══
+function showScreen(name, btn){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('screen-'+name).classList.add('on');
+  btn.classList.add('on');
+  if(name==='dashboard') renderDashboard();
+  if(name==='registrar') renderHoy();
+}
+
+// ══ FECHA ══
+function setFecha(){
+  var d = new Date();
+  var dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  document.getElementById('fecha-top').textContent =
+    dias[d.getDay()]+' '+d.getDate()+' '+meses[d.getMonth()];
+}
+
+// ══ INIT ══
+setFecha();
+initCentros();
+
+// Plato de ejemplo para arrancar
+addPlato({nom:'Muslo de pollo',caja:20,racion:2,unidad:'muslos',
+  g1nom:'Arroz',g1bolsa:2.5,g1g:120,
+  g2active:true,g2nom:'Habichuelas',g2bolsa:2.5,g2g:60});
+</script>
+</body>
+</html>
