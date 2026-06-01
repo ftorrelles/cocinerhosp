@@ -61,35 +61,43 @@ export function useAuth(): UseAuthReturn {
     }
 
     try {
-      const { data, error } = await supabase
-        .from('usuarios')
-        .select('id, username, nombre_completo, rol, pin_hash')
-        .eq('username', username.trim().toLowerCase())
-        .eq('activo', true)
-        .single()
+      const { data, error } = await supabase.rpc('verificar_usuario', {
+        p_username: username.trim().toLowerCase(),
+      })
 
-      if (error || !data) {
-        // PGRST116 = no rows returned (usuario no encontrado o inactivo)
+      if (error) {
+        console.error('🔍 Supabase RPC error:', error)
+        if (error.message?.includes('function "verificar_usuario" does not exist')) {
+          return { error: 'Error de configuración: ejecutá el SQL de setup en Supabase.' }
+        }
+        return { error: 'Error de conexión. Verificá tu conexión a internet.' }
+      }
+
+      if (!data || data.length === 0) {
+        console.warn('🔍 No user found for:', username.trim().toLowerCase())
         return { error: 'Usuario o PIN incorrecto' }
       }
 
-      const pinMatch = bcrypt.compareSync(pin, data.pin_hash)
+      const userRow = data[0]
+
+      const pinMatch = bcrypt.compareSync(pin, userRow.pin_hash)
       if (!pinMatch) {
         return { error: 'Usuario o PIN incorrecto' }
       }
 
       const profile: UserProfile = {
-        id: data.id,
-        username: data.username,
-        nombre_completo: data.nombre_completo,
-        rol: data.rol,
+        id: userRow.id,
+        username: userRow.username,
+        nombre_completo: userRow.nombre_completo,
+        rol: userRow.rol,
       }
 
       saveSession(profile)
       setUser(profile)
 
       return {}
-    } catch {
+    } catch (err) {
+      console.error('🔍 Login catch block:', err)
       return { error: 'Error de conexión. Verificá tu conexión a internet.' }
     }
   }
