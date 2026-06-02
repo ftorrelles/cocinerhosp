@@ -33,7 +33,7 @@ export default function TopBar() {
   }
 
   return (
-    <header className="sticky top-0 z-100 bg-accent text-white px-4 py-[14px] flex items-center justify-between">
+    <header className="bg-accent text-white px-4 py-[14px] flex items-center justify-between shrink-0">
       <div className="flex items-center gap-2">
         <IconBuildingHospital size={20} />
         <div>

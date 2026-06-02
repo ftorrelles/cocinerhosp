@@ -19,11 +19,10 @@ export default function ProtectedLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-bg">
+    <div className="h-dvh bg-bg flex flex-col overflow-hidden">
       <TopBar />
-      <main className="px-4 py-[14px] pb-24">
+      <main className="flex-1 overflow-y-auto px-4 py-[14px]">
         <Outlet />
-        <div className="h-24" aria-hidden="true" />
       </main>
       <BottomNav />
     </div>
