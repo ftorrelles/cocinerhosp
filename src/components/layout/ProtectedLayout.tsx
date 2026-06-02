@@ -21,8 +21,9 @@ export default function ProtectedLayout() {
   return (
     <div className="min-h-screen bg-bg">
       <TopBar />
-      <main className="px-4 py-[14px] pb-20">
+      <main className="px-4 py-[14px] pb-24">
         <Outlet />
+        <div className="h-24" aria-hidden="true" />
       </main>
       <BottomNav />
     </div>
