@@ -80,6 +80,66 @@ VALUES
 ON CONFLICT (username) DO NOTHING;
 
 -- ══════════════════════════════════════════════════════════
+-- 7. Crear tabla registros (para Fase 4 — historial)
+-- ══════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.registros (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  usuario_id UUID REFERENCES public.usuarios(id) NOT NULL,
+  plato TEXT NOT NULL,
+  servicio TEXT NOT NULL,              -- 'Almuerzo' | 'Cena'
+  raciones INTEGER NOT NULL,
+  fecha DATE NOT NULL DEFAULT CURRENT_DATE,
+  notas TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE public.registros ENABLE ROW LEVEL SECURITY;
+
+-- ══════════════════════════════════════════════════════════
+-- 8. Función RPC: insertar registro (SECURITY DEFINER)
+-- ══════════════════════════════════════════════════════════
+CREATE OR REPLACE FUNCTION public.insertar_registro(
+  p_usuario_id UUID,
+  p_plato TEXT,
+  p_servicio TEXT,
+  p_raciones INTEGER,
+  p_notas TEXT DEFAULT NULL
+)
+RETURNS SETOF public.registros
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  RETURN QUERY
+  INSERT INTO public.registros (usuario_id, plato, servicio, raciones, notas, fecha)
+  VALUES (p_usuario_id, p_plato, p_servicio, p_raciones, p_notas, CURRENT_DATE)
+  RETURNING *;
+END;
+$$;
+
+-- ══════════════════════════════════════════════════════════
+-- 9. Función RPC: obtener registros de hoy (SECURITY DEFINER)
+-- ══════════════════════════════════════════════════════════
+CREATE OR REPLACE FUNCTION public.obtener_registros_hoy(
+  p_usuario_id UUID
+)
+RETURNS SETOF public.registros
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT *
+  FROM public.registros
+  WHERE usuario_id = p_usuario_id
+    AND fecha = CURRENT_DATE
+  ORDER BY created_at DESC;
+END;
+$$;
+
+-- ══════════════════════════════════════════════════════════
 -- Verificación: correr esto para confirmar que funciona
 -- ══════════════════════════════════════════════════════════
 -- SELECT * FROM public.verificar_usuario('carlos');
