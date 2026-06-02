@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react'
-import { IconBuildingHospital } from '@tabler/icons-react'
+import { useNavigate } from 'react-router-dom'
+import { IconBuildingHospital, IconLogout } from '@tabler/icons-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useAppStore } from '../../store/useAppStore'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function TopBar() {
+  const navigate = useNavigate()
+  const { signOut } = useAuth()
   const [dateStr, setDateStr] = useState(() => getFormattedDate())
   const user = useAppStore((s) => s.user)
 
@@ -23,6 +27,11 @@ export default function TopBar() {
     }
   }, [])
 
+  const handleLogout = async () => {
+    await signOut()
+    navigate('/login', { replace: true })
+  }
+
   return (
     <header className="sticky top-0 z-100 bg-accent text-white px-4 py-[14px] flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -36,7 +45,17 @@ export default function TopBar() {
           )}
         </div>
       </div>
-      <time className="text-[11px] font-mono opacity-75 text-right">{dateStr}</time>
+
+      <div className="flex items-center gap-3">
+        <time className="text-[11px] font-mono opacity-75">{dateStr}</time>
+        <button
+          onClick={handleLogout}
+          className="flex items-center justify-center w-[30px] h-[30px] rounded-sm opacity-70 hover:opacity-100 hover:bg-white/10 transition-all cursor-pointer"
+          title="Cerrar sesión"
+        >
+          <IconLogout size={18} />
+        </button>
+      </div>
     </header>
   )
 }
