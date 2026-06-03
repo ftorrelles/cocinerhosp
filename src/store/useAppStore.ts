@@ -39,24 +39,6 @@ export interface UserSession {
   rol: string
 }
 
-// Keep ResultadoPlato exported for backward compat (ResultadoPlato.tsx component uses it)
-export interface ResultadoPlato {
-  id: string
-  nombre: string
-  servicio: string
-  proteina: ProteinaResult
-  unidadesPorRacion: number
-  nombreUnidad: string
-  guar1: GuarnicionResult
-  guar1Nombre: string
-  guar1Gramos: number
-  guar2: GuarnicionResult | null
-  guar2Nombre: string | null
-  guar2Gramos: number | null
-  desglose: DesgloseCentro[]
-  mermaProtP: number
-}
-
 export interface AppState {
   servicio: 'almuerzo' | 'cena'
   pacientes: Record<string, number>
