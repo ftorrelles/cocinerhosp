@@ -38,6 +38,7 @@ const METRICS = [
 interface ChefOption {
   id: string
   nombre_completo: string
+  rol: string
 }
 
 // ── Component ──
@@ -58,13 +59,18 @@ export default function Dashboard() {
     if (!puedeFiltrar) return
 
     supabase
-      .from('usuarios')
-      .select('id, nombre_completo')
-      .eq('activo', true)
-      .in('rol', ['chef', 'chef_jefe'])
-      .order('nombre_completo')
-      .then(({ data: chefsData }) => {
-        if (chefsData) setChefs(chefsData as ChefOption[])
+      .rpc('listar_usuarios')
+      .then(({ data, error: rpcError }) => {
+        if (rpcError) {
+          console.error('🔍 Error al listar chefs:', rpcError)
+          return
+        }
+        const rows = (data as ChefOption[] | null) ?? []
+        const activos = rows.filter(
+          (u) => (u.rol === 'chef' || u.rol === 'chef_jefe')
+        )
+        console.log('🔍 Chefs cargados:', activos.length, activos)
+        setChefs(activos)
       })
   }, [puedeFiltrar])
 
@@ -81,7 +87,11 @@ export default function Dashboard() {
         <IconChefHat size={18} className="text-text3 shrink-0" />
         <select
           value={selectedChefId ?? ''}
-          onChange={(e) => setSelectedChefId(e.target.value || undefined)}
+          onChange={(e) => {
+            const val = e.target.value || undefined
+            console.log('🔍 Chef seleccionado:', val ?? 'TODOS')
+            setSelectedChefId(val)
+          }}
           className="flex-1 px-3 py-[10px] text-sm border border-border rounded-sm bg-surface text-text focus:outline-none focus:border-accent transition-colors"
         >
           <option value="">Todos los chefs</option>

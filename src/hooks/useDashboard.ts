@@ -60,12 +60,15 @@ export function useDashboard(
       setLoading(true)
       setError(null)
 
+      const params = {
+        p_usuario_id: usuarioId ?? null,
+        p_mes: month,
+      }
+      console.log('🔍 obtener_dashboard params:', params)
+
       const { data: raw, error: rpcError } = await supabase.rpc(
         'obtener_dashboard',
-        {
-          p_usuario_id: usuarioId ?? null,
-          p_mes: month,
-        },
+        params,
       )
 
       if (rpcError) {
@@ -73,6 +76,8 @@ export function useDashboard(
         setError('Error al cargar el dashboard')
         return
       }
+
+      console.log('🔍 obtener_dashboard result:', raw)
 
       setData(raw as unknown as DashboardData)
     } catch (err) {
