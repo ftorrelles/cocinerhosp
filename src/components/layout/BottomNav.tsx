@@ -1,23 +1,44 @@
+import { useMemo } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   IconCalculator,
   IconBowlSpoon,
   IconClipboardList,
   IconChartBar,
+  IconUsers,
 } from '@tabler/icons-react'
+import { useAppStore } from '../../store/useAppStore'
 
-const tabs = [
+interface TabDef {
+  to: string
+  label: string
+  icon: typeof IconCalculator
+  adminOnly?: boolean
+}
+
+const ALL_TABS: TabDef[] = [
   { to: '/', label: 'Calcular', icon: IconCalculator },
   { to: '/blandas', label: 'Blandas', icon: IconBowlSpoon },
   { to: '/registrar', label: 'Registrar', icon: IconClipboardList },
   { to: '/dashboard', label: 'Dashboard', icon: IconChartBar },
-] as const
+  { to: '/usuarios', label: 'Usuarios', icon: IconUsers, adminOnly: true },
+]
 
 export default function BottomNav() {
+  const user = useAppStore((s) => s.user)
+
+  const tabs = useMemo(() => {
+    if (user?.rol === 'admin') return ALL_TABS
+    return ALL_TABS.filter((t) => !t.adminOnly)
+  }, [user?.rol])
+
   return (
     <nav
-      className="bg-surface border-t border-border grid grid-cols-4 shrink-0"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      className="bg-surface border-t border-border grid shrink-0"
+      style={{
+        gridTemplateColumns: `repeat(${tabs.length}, 1fr)`,
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      }}
     >
       {tabs.map((tab) => (
         <NavLink

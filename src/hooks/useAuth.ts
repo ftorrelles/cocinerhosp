@@ -18,6 +18,7 @@ export interface UseAuthReturn {
   loading: boolean
   signIn: (username: string, pin: string) => Promise<{ error?: string }>
   signOut: () => Promise<void>
+  cambiarPin: (pinActual: string, pinNuevo: string) => Promise<{ error?: string }>
 }
 
 function loadSession(): UserProfile | null {
@@ -111,11 +112,60 @@ export function useAuth(): UseAuthReturn {
     }
   }
 
+  const cambiarPin = async (
+    pinActual: string,
+    pinNuevo: string,
+  ): Promise<{ error?: string }> => {
+    if (!pinActual || pinActual.length !== 4 || !/^\d{4}$/.test(pinActual)) {
+      return { error: 'El PIN actual debe tener 4 dígitos' }
+    }
+
+    if (!pinNuevo || pinNuevo.length !== 4 || !/^\d{4}$/.test(pinNuevo)) {
+      return { error: 'El PIN nuevo debe tener exactamente 4 dígitos numéricos' }
+    }
+
+    const currentUser = user ?? useAppStore.getState().user
+    if (!currentUser) {
+      return { error: 'No hay sesión activa' }
+    }
+
+    try {
+      const { data, error } = await supabase.rpc('verificar_usuario', {
+        p_username: currentUser.username,
+      })
+
+      if (error || !data || data.length === 0) {
+        return { error: 'Error al verificar el PIN actual' }
+      }
+
+      const pinMatch = bcrypt.compareSync(pinActual, data[0].pin_hash)
+      if (!pinMatch) {
+        return { error: 'El PIN actual no es correcto' }
+      }
+
+      const nuevoHash = bcrypt.hashSync(pinNuevo, 10)
+      const { error: updateError } = await supabase.rpc('cambiar_pin', {
+        p_usuario_id: currentUser.id,
+        p_pin_nuevo: nuevoHash,
+      })
+
+      if (updateError) {
+        console.error('Error al cambiar PIN:', updateError)
+        return { error: 'Error al cambiar el PIN. Intentalo de nuevo.' }
+      }
+
+      return {}
+    } catch (err) {
+      console.error('Error en cambiarPin:', err)
+      return { error: 'Error de conexión. Verificá tu conexión a internet.' }
+    }
+  }
+
   const signOut = async (): Promise<void> => {
     clearSession()
     setUser(null)
     useAppStore.getState().setUser(null)
   }
 
-  return { user, session: user, loading, signIn, signOut }
+  return { user, session: user, loading, signIn, signOut, cambiarPin }
 }

@@ -1,6 +1,9 @@
-import { IconChartBar, IconList, IconAlertCircle } from '@tabler/icons-react'
+import { useEffect, useState } from 'react'
+import { IconChartBar, IconList, IconAlertCircle, IconChefHat } from '@tabler/icons-react'
+import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { useDashboard } from '../hooks/useDashboard'
+import { useAppStore } from '../store/useAppStore'
 import Spinner from '../components/ui/Spinner'
 
 // ── Metric card colors ──
@@ -32,11 +35,65 @@ const METRICS = [
   },
 ] as const
 
+interface ChefOption {
+  id: string
+  nombre_completo: string
+}
+
 // ── Component ──
 
 export default function Dashboard() {
   const { user } = useAuth()
-  const { data, loading, error } = useDashboard(user?.id)
+  const currentUser = useAppStore((s) => s.user)
+  const puedeFiltrar = currentUser?.rol === 'admin' || currentUser?.rol === 'chef_jefe'
+
+  const [chefs, setChefs] = useState<ChefOption[]>([])
+  const [selectedChefId, setSelectedChefId] = useState<string | undefined>(user?.id)
+
+  const { data, loading, error } = useDashboard(
+    puedeFiltrar ? selectedChefId : user?.id,
+  )
+
+  useEffect(() => {
+    if (!puedeFiltrar) return
+
+    supabase
+      .from('usuarios')
+      .select('id, nombre_completo')
+      .eq('activo', true)
+      .in('rol', ['chef', 'chef_jefe'])
+      .order('nombre_completo')
+      .then(({ data: chefsData }) => {
+        if (chefsData) setChefs(chefsData as ChefOption[])
+      })
+  }, [puedeFiltrar])
+
+  useEffect(() => {
+    setSelectedChefId(user?.id)
+  }, [user?.id])
+
+  // ── Chef filter ──
+  const renderChefFilter = () => {
+    if (!puedeFiltrar) return null
+
+    return (
+      <div className="flex items-center gap-2 mb-3">
+        <IconChefHat size={18} className="text-text3 shrink-0" />
+        <select
+          value={selectedChefId ?? ''}
+          onChange={(e) => setSelectedChefId(e.target.value || undefined)}
+          className="flex-1 px-3 py-[10px] text-sm border border-border rounded-sm bg-surface text-text focus:outline-none focus:border-accent transition-colors"
+        >
+          <option value="">Todos los chefs</option>
+          {chefs.map((chef) => (
+            <option key={chef.id} value={chef.id}>
+              {chef.nombre_completo}
+            </option>
+          ))}
+        </select>
+      </div>
+    )
+  }
 
   // ── Loading ──
   if (loading) {
@@ -61,6 +118,7 @@ export default function Dashboard() {
   if (!data || data.total_elaboraciones === 0) {
     return (
       <>
+        {renderChefFilter()}
         {/* Metric cards grid (all zeros) */}
         <div className="grid grid-cols-2 gap-[10px] mb-[10px]">
           {METRICS.map((m) => (
@@ -83,6 +141,7 @@ export default function Dashboard() {
 
   return (
     <>
+      {renderChefFilter()}
       {/* Metric cards */}
       <div className="grid grid-cols-2 gap-[10px] mb-[10px]">
         <MetricCard

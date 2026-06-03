@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IconBuildingHospital, IconLogout } from '@tabler/icons-react'
+import { IconBuildingHospital, IconLogout, IconUserCircle } from '@tabler/icons-react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useAppStore } from '../../store/useAppStore'
@@ -15,10 +15,8 @@ export default function TopBar() {
   useEffect(() => {
     const tick = () => setDateStr(getFormattedDate())
 
-    // Update on visibility change (user returns to tab on a new day)
     document.addEventListener('visibilitychange', tick)
 
-    // Update every minute to catch day changes
     const interval = setInterval(tick, 60_000)
 
     return () => {
@@ -48,6 +46,13 @@ export default function TopBar() {
 
       <div className="flex items-center gap-3">
         <time className="text-[11px] font-mono opacity-75">{dateStr}</time>
+        <button
+          onClick={() => navigate('/perfil')}
+          className="flex items-center justify-center w-[30px] h-[30px] rounded-sm opacity-70 hover:opacity-100 hover:bg-white/10 transition-all cursor-pointer"
+          title="Perfil"
+        >
+          <IconUserCircle size={18} />
+        </button>
         <button
           onClick={handleLogout}
           className="flex items-center justify-center w-[30px] h-[30px] rounded-sm opacity-70 hover:opacity-100 hover:bg-white/10 transition-all cursor-pointer"
