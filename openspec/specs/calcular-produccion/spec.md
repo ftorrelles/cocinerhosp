@@ -22,69 +22,87 @@ The system MUST allow the user to select between "Almuerzo" and "Cena". When the
 - WHEN the user changes Sur from 120 to 80
 - THEN Sur shows 80 and total changes accordingly
 
-### Requirement: Gestionar un Plato combinado
+### Requirement: Preparaciones independientes por pestaña
 
-The system MUST allow the user to manage a single "Plato" that contains one proteína and up to two guarniciones. The user SHALL add, edit, and remove this plato.
+The system MUST display two tabs: "Proteína" and "Guarnición". Each tab SHALL show an independent list of preparations of that type. The service selector and patient editor SHALL remain visible above the tabs regardless of which tab is active.
+(Previously: Single combined Plato with proteína + up to 2 guarniciones)
 
-#### Scenario: Seleccionar proteína por preset
+#### Scenario: Cambiar entre pestañas
 
-- GIVEN Calcular page with no plato
-- WHEN the user taps "Albóndigas" in ProteínaSection
-- THEN plato.nombre = "Albóndigas", plato.unidadesPorCaja = 52, plato.unidadesPorRacion = 5
+- GIVEN the user is on Calcular with 2 proteína preparations
+- WHEN the user taps the "Guarnición" tab
+- THEN the guarnición preparations are shown
+- AND the service selector and patient counts remain unchanged
 
-#### Scenario: Editar campos de proteína
+#### Scenario: Múltiples preparaciones del mismo tipo
 
-- GIVEN a plato with proteína selected
-- WHEN the user changes the merma input
-- THEN the plato updates immediately on each keystroke
+- GIVEN the user is on the Proteína tab
+- WHEN the user adds "Albóndigas" and "Muslo pollo"
+- THEN both appear as separate cards in the Proteína tab
 
-#### Scenario: Configurar primera guarnición
+### Requirement: Botón "Calcular" por preparación
 
-- GIVEN a plato with proteína
-- WHEN the user selects "Arroz" in the first guarnición slot
-- THEN guarnicion1 data is set with arroz defaults
+Each preparation MUST have its own "Calcular" button. The system SHALL calculate only that preparation when tapped, without affecting other preparations.
+(Previously: Single "Calcular" button at page bottom computed all combined)
 
-#### Scenario: Configurar segunda guarnición
+#### Scenario: Calcular una proteína entre varias
 
-- GIVEN a plato with first guarnición set
-- WHEN the user selects "Habichuelas" in the second guarnición slot
-- THEN guarnicion2 data is set
+- GIVEN 2 proteína preparations (Albóndigas and Muslo pollo)
+- WHEN the user taps "Calcular" only on Albóndigas
+- THEN the result for Albóndigas is shown inline
+- AND Muslo pollo still shows no result
 
-### Requirement: Calcular el plato completo
-
-The single "Calcular" button at the bottom of the page MUST compute the result for proteína, guarnición1, and guarnición2 together, displaying them in a separate ResultadoPlato component.
-
-#### Scenario: Calcular plato con proteína y 1 guarnición
-
-- GIVEN a plato with proteína (albóndigas: caja=52, racion=5) and guarnición (habichuelas: merma=22%, 120g)
-- WHEN the user taps "Calcular"
-- THEN the result shows proteína cajas=40 AND guarnición bolsas=4
-
-#### Scenario: Calcular sin pacientes
+#### Scenario: Botón deshabilitado sin pacientes
 
 - GIVEN 0 total patients
+- WHEN viewing any preparation
+- THEN its "Calcular" button is disabled
+
+### Requirement: Resultado inline por preparación
+
+Each preparation MUST display its result inline below its "Calcular" button. The result SHALL show: cajas a abrir, unidades disponibles, unidades necesarias, and sobrante for proteína; bolsas, bruto, neto, and sobrante for guarnición.
+(Previously: Results displayed in separate ResultadoPlato component)
+
+#### Scenario: Resultado inline tras calcular
+
+- GIVEN 414 patients and an albóndigas preparation
 - WHEN the user taps "Calcular"
-- THEN no calculation is performed
+- THEN a result section appears below the button showing cajas=40, sobrante, etc.
 
-### Requirement: Inputs numéricos con autocompletado inmediato
+### Requirement: Inputs con estado local, sync en blur
 
-The system UPDATES the store on each keystroke. When the user clears a numeric field, the system immediately fills it with a default value because the parsing formula `parseFloat("") || defaultValue` treats empty string as falsy.
+Each numeric input SHALL use local `useState` while the user is editing. The system MUST NOT overwrite the input value or auto-fill it while the user is typing. On blur, the value SHALL sync to the store. If the value is empty on blur, the system SHALL restore a default value.
+(Previously: Store updated on each keystroke, `parseFloat("") || defaultValue` caused auto-fill)
 
-#### Scenario: Autocompletado al vaciar campo de merma
+#### Scenario: Vaciar campo sin autocompletado inmediato
 
-- GIVEN a guarnición with merma=22%
-- WHEN the user clears the merma input
-- THEN the field immediately shows 20 (the default) instead of remaining empty
+- GIVEN a preparation with merma=25%
+- WHEN the user clears the merma field
+- THEN the field stays empty (no auto-fill) while focused
+- AND on blur, the field restores to 0
 
-#### Scenario: Autocompletado al vaciar campo de gramos
+#### Scenario: Escribir nuevo valor
 
-- GIVEN a guarnición with gramos=120
-- WHEN the user clears the gramos input
-- THEN the field immediately shows 60 instead of remaining empty
+- GIVEN a preparation with udsCaja=52
+- WHEN the user clears the field
+- AND types "40"
+- THEN the field shows "40" with no intermediate auto-complete
+
+### Requirement: Chip "＋Otro" para preparaciones personalizadas
+
+Each tab MUST show preset chips plus a trailing "＋Otro" chip. When tapped, "＋Otro" SHALL expand a custom form with empty fields where the user can define a fully custom preparation.
+
+#### Scenario: Agregar proteína personalizada
+
+- GIVEN the user is on the Proteína tab
+- WHEN the user taps "＋Otro"
+- THEN a custom form appears with empty name, udsCaja, udsRacion, nomUnidad, and merma fields
+- AND the preset chips are replaced by the custom form
 
 ## Notes
 
-- The current implementation uses a single `Plato` type that combines proteína + 2 guarniciones
-- Store mutations happen on every keystroke (`onChange` sync), not on blur
-- Results are shown in a separate `ResultadoPlato` component, not inline
-- The `PlatoItem.tsx` component handles the full plato presentation
+- Preparations are independent: `PreparacionProteina[]` and `PreparacionGuarnicion[]` in the store
+- Inputs use local useState + sync to store on blur (fixes previous auto-fill bug)
+- Each preparation has its own Calcular button and inline result
+- Service selector and patient editor are shared across both tabs
+- Old `Plato` type, `PlatoItem.tsx`, and `ResultadoPlato.tsx` have been removed
