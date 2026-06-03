@@ -49,7 +49,9 @@ export default function Dashboard() {
   const puedeFiltrar = currentUser?.rol === 'admin' || currentUser?.rol === 'chef_jefe'
 
   const [chefs, setChefs] = useState<ChefOption[]>([])
-  const [selectedChefId, setSelectedChefId] = useState<string | undefined>(user?.id)
+  const [selectedChefId, setSelectedChefId] = useState<string | undefined>(
+    puedeFiltrar ? undefined : user?.id,
+  )
 
   const { data, loading, error } = useDashboard(
     puedeFiltrar ? selectedChefId : user?.id,
@@ -66,11 +68,8 @@ export default function Dashboard() {
           return
         }
         const rows = (data as ChefOption[] | null) ?? []
-        const activos = rows.filter(
-          (u) => (u.rol === 'chef' || u.rol === 'chef_jefe')
-        )
-        console.log('🔍 Chefs cargados:', activos.length, activos)
-        setChefs(activos)
+        console.log('🔍 Chefs cargados:', rows.length, rows)
+        setChefs(rows)
       })
   }, [puedeFiltrar])
 
