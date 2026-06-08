@@ -18,7 +18,7 @@ export default function TablaChinos() {
     const r = await addRegistro({
       plato: 'Blandas - Chinos',
       servicio: servicio === 'almuerzo' ? 'Almuerzo' : 'Cena',
-      raciones: barquetas,
+      raciones: barquetas * 10,
       categoria: 'blandas',
     })
     if (!r.error) {
@@ -84,7 +84,7 @@ export default function TablaChinos() {
         {guardado && (
           <div className="mt-1 flex items-center gap-1 text-xs font-semibold text-accent">
             <IconCheck size={13} />
-            Producción registrada ✓ ({parseInt(gastros) * 6} barquetas)
+            {parseInt(gastros) * 6} barquetas ({parseInt(gastros) * 6 * 10} raciones) registradas ✓
           </div>
         )}
       </div>

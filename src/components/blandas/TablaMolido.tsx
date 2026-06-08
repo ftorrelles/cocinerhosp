@@ -23,7 +23,7 @@ export default function TablaMolido() {
     const r = await addRegistro({
       plato: 'Blandas - Molido',
       servicio: servicio === 'almuerzo' ? 'Almuerzo' : 'Cena',
-      raciones: b,
+      raciones: b * 10,
       categoria: 'blandas',
     })
     if (!r.error) setGuardado(true)
@@ -84,7 +84,7 @@ export default function TablaMolido() {
         {guardado && (
           <div className="mt-1 flex items-center gap-1 text-xs font-semibold text-accent">
             <IconCheck size={13} />
-            Producción registrada ✓ ({barquetas} barquetas)
+            {barquetas} barquetas ({parseInt(barquetas) * 10} raciones) registradas ✓
           </div>
         )}
       </div>
