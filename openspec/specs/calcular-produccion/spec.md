@@ -102,20 +102,20 @@ Each tab MUST show preset chips plus a trailing "＋Otro" chip. The preset chips
 
 ### Requirement: Botón "Guardar como preparación" en resultado inline
 
-After a calculation result is displayed, the system MUST show a "Guardar como preparación" button below the result. When tapped, the system MUST persist the preparation to the historial using `useHistorial().addRegistro()` with the preparation name, current service, and total patient count, then display a confirmation "Preparación guardada ✓" without redirecting.
+After a calculation result is displayed, the system MUST show a "Guardar como preparación" button below the result. When tapped, the system MUST persist the preparation to the historial using `useHistorial().addRegistro()` with the preparation name, current service, total patient count, and categoria (`'proteina'` on Proteína tab, `'guarnicion'` on Guarnición tab), then display a confirmation "Preparación guardada ✓" without redirecting.
 
 #### Scenario: Guardar preparación desde proteína
 
 - GIVEN the user calculated Albóndigas with 414 patients showing the result
 - WHEN the user taps "Guardar como preparación"
-- THEN the system calls `addRegistro({ plato: 'Albóndigas', servicio: 'Almuerzo', raciones: 414 })`
+- THEN the system calls `addRegistro({ plato: 'Albóndigas', servicio: 'Almuerzo', raciones: 414, categoria: 'proteina' })`
 - AND shows "Preparación guardada ✓" inline
 
 #### Scenario: Guardar preparación desde guarnición
 
 - GIVEN the user calculated Habichuelas with 324 patients showing the result
 - WHEN the user taps "Guardar como preparación"
-- THEN the system persists with correct plato, servicio and raciones
+- THEN the system calls `addRegistro({ plato: 'Habichuelas', servicio: 'Cena', raciones: 324, categoria: 'guarnicion' })`
 
 #### Scenario: Botón oculto sin resultado
 
@@ -126,6 +126,19 @@ After a calculation result is displayed, the system MUST show a "Guardar como pr
 
 - GIVEN a custom preparation named "Ensalada especial" with a result
 - THEN the button uses "Ensalada especial" as the plato value
+
+#### Scenario: Custom preparation guarda según tab activa
+
+- GIVEN a custom preparation "Ensalada especial" on the Proteína tab with a result
+- WHEN the user taps "Guardar como preparación"
+- THEN the system calls `addRegistro` with `categoria: 'proteina'`
+
+#### Scenario: Registros existentes sin categoría no se rompen
+
+- GIVEN existing historial records saved before fase-10 without `categoria`
+- WHEN the dashboard loads those records
+- THEN `categoria` is `NULL` for those records
+- AND the system handles `NULL` categoria gracefully
 
 ## Notes
 

@@ -23,6 +23,7 @@ export interface UseHistorialReturn {
     servicio: string
     raciones: number
     notas?: string
+    categoria?: string
   }) => Promise<{ error?: string }>
 }
 
@@ -70,12 +71,13 @@ export function useHistorial(usuarioId: string | undefined): UseHistorialReturn 
       servicio: string
       raciones: number
       notas?: string
+      categoria?: string
     }): Promise<{ error?: string }> => {
       if (!usuarioId) {
         return { error: 'Usuario no autenticado' }
       }
 
-      const { plato, servicio, raciones, notas } = params
+      const { plato, servicio, raciones, notas, categoria } = params
 
       if (!plato.trim()) {
         return { error: 'Escribí el nombre del plato' }
@@ -91,6 +93,7 @@ export function useHistorial(usuarioId: string | undefined): UseHistorialReturn 
           p_servicio: servicio,
           p_raciones: raciones,
           p_notas: notas ?? null,
+          p_categoria: categoria ?? 'manual',
         })
 
         if (rpcError) {

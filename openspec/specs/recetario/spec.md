@@ -171,3 +171,25 @@ Todos los usuarios autenticados (admin, chef_jefe, chef) DEBEN poder consultar c
 - WHEN hace clic en una card de receta para ver detalles
 - THEN el sistema muestra los ingredientes escalados al total de pacientes del servicio actual
 - AND no se muestran botones de Editar, Eliminar ni ＋ Nueva receta
+
+### Requirement: Botón "Guardar como preparación" con categoría receta
+
+When the user visualises a recipe with scaled ingredients and an active result, the system MUST show a "Guardar como preparación" button. When tapped, the system MUST persist the recipe as a preparation in the historial using `useHistorial().addRegistro()` with `categoria='receta'`, the recipe name as `plato`, current service, and current total patient count, then display a confirmation "Preparación guardada ✓" without redirecting.
+
+#### Scenario: Guardar receta como preparación
+
+- GIVEN the user is on `/recetas` viewing "Pollo asado" with 414 patients and scaled ingredients shown
+- WHEN the user taps "Guardar como preparación"
+- THEN the system calls `addRegistro({ plato: 'Pollo asado', servicio: 'Almuerzo', raciones: 414, categoria: 'receta' })`
+- AND shows "Preparación guardada ✓" inline
+
+#### Scenario: Botón oculto cuando no hay receta seleccionada
+
+- GIVEN the user is on `/recetas` with no recipe selected or visualised
+- THEN the "Guardar como preparación" button is NOT shown
+
+#### Scenario: Botón usa el nombre de la receta
+
+- GIVEN the user is viewing recipe "Merluza al horno" with scaled ingredients
+- WHEN the user taps "Guardar como preparación"
+- THEN the `plato` value sent is 'Merluza al horno'

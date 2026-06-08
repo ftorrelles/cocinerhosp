@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { IconClock, IconBook, IconPlus, IconEdit, IconTrash, IconX, IconChefHat } from '@tabler/icons-react'
+import { IconClock, IconBook, IconPlus, IconEdit, IconTrash, IconX, IconChefHat, IconCheck } from '@tabler/icons-react'
 import { useAppStore } from '../store/useAppStore'
 import { useRecetas, type Receta, type RecetaIngrediente, type CreateRecetaInput } from '../hooks/useRecetas'
+import { useHistorial } from '../hooks/useHistorial'
 import { escalarIngredientes } from '../lib/calculos'
 import ServicioToggle from '../components/calcular/ServicioToggle'
 import CentrosGrid from '../components/calcular/CentrosGrid'
@@ -30,8 +31,10 @@ export default function Recetas() {
   const [formError, setFormError] = useState('')
   const [saving, setSaving] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
-
+  const [guardado, setGuardado] = useState(false)
   const [selectedReceta, setSelectedReceta] = useState<Receta | null>(null)
+  const servicio = useAppStore((s) => s.servicio)
+  const { addRegistro } = useHistorial(user?.id)
 
   const openCreate = () => {
     setModalMode('create')
@@ -260,6 +263,29 @@ export default function Recetas() {
                           <div className="mt-2 text-[11px] text-text3 italic">
                             {receta.notas}
                           </div>
+                        )}
+
+                        {guardado ? (
+                          <div className="mt-2 flex items-center justify-center gap-1 text-xs font-semibold text-accent py-[7px]">
+                            <IconCheck size={14} />
+                            Preparación guardada ✓
+                          </div>
+                        ) : (
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation()
+                              const r = await addRegistro({
+                                plato: receta.nombre,
+                                servicio: servicio === 'almuerzo' ? 'Almuerzo' : 'Cena',
+                                raciones: totalPacientes,
+                                categoria: 'receta',
+                              })
+                              if (!r.error) setGuardado(true)
+                            }}
+                            className="w-full mt-2 py-[7px] text-xs font-semibold border border-accent rounded-sm bg-accent-light text-accent cursor-pointer active:scale-[0.98] transition-transform"
+                          >
+                            Guardar como preparación
+                          </button>
                         )}
                       </div>
                     )}

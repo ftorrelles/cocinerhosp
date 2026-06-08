@@ -332,6 +332,7 @@ export default function GuarnicionSection({ preparacionId }: GuarnicionSectionPr
                     plato: nombre || prep.nombre,
                     servicio: servicio === 'almuerzo' ? 'Almuerzo' : 'Cena',
                     raciones: totalPacientes,
+                    categoria: 'guarnicion',
                   })
                   if (!r.error) setGuardado(true)
                 }}

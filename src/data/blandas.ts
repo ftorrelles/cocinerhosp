@@ -39,21 +39,21 @@ export interface ResumenBolsas {
 export const CHINOS: Chino[] = [
   {
     tipo: 'Zanahoria',
-    ingredientes: '2 papas + 2 zanahoria',
+    ingredientes: '3 papas + 1 zanahoria',
     bolsas: 4,
     brutoKg: 10,
   },
   {
     tipo: 'Calabaza',
-    ingredientes: '2 papas + 2 calabaza',
+    ingredientes: '3 papas + 1 calabaza',
     bolsas: 4,
     brutoKg: 10,
   },
   {
     tipo: 'Calabacín',
-    ingredientes: '3 papas + 2 calabacín',
-    bolsas: 5,
-    brutoKg: 12.5,
+    ingredientes: '3 papas + 1 calabacín',
+    bolsas: 4,
+    brutoKg: 10,
   },
 ]
 
@@ -100,9 +100,9 @@ export const PURE_TOTAL_KG = 66
 // ── Resumen ──
 
 export const RESUMEN_BOLSAS: ResumenBolsas = {
-  papas: 39,
-  zanahoria: 3,
-  calabaza: 2,
-  calabacin: 4,
-  total: 48,
+  papas: 41,
+  zanahoria: 2,
+  calabaza: 1,
+  calabacin: 3,
+  total: 47,
 }

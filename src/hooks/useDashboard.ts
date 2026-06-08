@@ -13,6 +13,7 @@ export interface UltimoRegistro {
   plato: string
   raciones: number
   servicio: string
+  categoria: string
   fecha: string
   created_at: string
   chef: string | null
@@ -23,6 +24,7 @@ export interface DashboardData {
   total_elaboraciones: number
   dias_con_registro: number
   media_diaria: number
+  hechos_hoy: number
   top_platos: TopPlato[]
   ultimos_registros: UltimoRegistro[]
 }
@@ -48,6 +50,7 @@ function getCurrentMonth(): string {
 export function useDashboard(
   usuarioId: string | undefined,
   mes?: string,
+  categoria?: string,
 ): UseDashboardReturn {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(false)
@@ -60,10 +63,11 @@ export function useDashboard(
       setLoading(true)
       setError(null)
 
-      const params = {
+      const params: Record<string, unknown> = {
         p_usuario_id: usuarioId ?? null,
         p_mes: month,
       }
+      if (categoria) params.p_categoria = categoria
       console.log('🔍 obtener_dashboard params:', params)
 
       const { data: raw, error: rpcError } = await supabase.rpc(
@@ -86,7 +90,7 @@ export function useDashboard(
     } finally {
       setLoading(false)
     }
-  }, [usuarioId, month])
+  }, [usuarioId, month, categoria])
 
   useEffect(() => {
     fetchDashboard()

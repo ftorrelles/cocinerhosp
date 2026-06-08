@@ -352,6 +352,7 @@ export default function ProteinaSection({ preparacionId }: ProteinaSectionProps)
                     plato: nombre || prep.nombre,
                     servicio: servicio === 'almuerzo' ? 'Almuerzo' : 'Cena',
                     raciones: totalPacientes,
+                    categoria: 'proteina',
                   })
                   if (!r.error) setGuardado(true)
                 }}
