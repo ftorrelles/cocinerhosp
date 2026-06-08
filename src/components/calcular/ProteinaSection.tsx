@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
-import { IconMeat, IconCalculator, IconX } from '@tabler/icons-react'
+import { IconMeat, IconCalculator, IconX, IconCheck } from '@tabler/icons-react'
 import { useAppStore } from '../../store/useAppStore'
 import { PROTEINA_PRESETS } from '../../data/proteinaPresets'
 import { detectarMerma } from '../../data/mermas'
+import { useHistorial } from '../../hooks/useHistorial'
 
 interface ProteinaSectionProps {
   preparacionId: string
@@ -26,6 +27,10 @@ export default function ProteinaSection({ preparacionId }: ProteinaSectionProps)
   const [merma, setMerma] = useState(String(prep?.merma ?? 25))
 
   const [showCustom, setShowCustom] = useState(false)
+  const [guardado, setGuardado] = useState(false)
+  const user = useAppStore((s) => s.user)
+  const servicio = useAppStore((s) => s.servicio)
+  const { addRegistro } = useHistorial(user?.id)
 
   // Sync store values to local state only when prep changes (e.g., preset applied)
   useEffect(() => {
@@ -334,6 +339,27 @@ export default function ProteinaSection({ preparacionId }: ProteinaSectionProps)
                   : `${resultado.sobrante} ${prep.nombreUnidad} → ${resultado.sobranteRaciones} rac. extra`}
               </span>
             </div>
+
+            {guardado ? (
+              <div className="mt-2 flex items-center justify-center gap-1 text-xs font-semibold text-accent py-[7px]">
+                <IconCheck size={14} />
+                Preparación guardada ✓
+              </div>
+            ) : (
+              <button
+                onClick={async () => {
+                  const r = await addRegistro({
+                    plato: nombre || prep.nombre,
+                    servicio: servicio === 'almuerzo' ? 'Almuerzo' : 'Cena',
+                    raciones: totalPacientes,
+                  })
+                  if (!r.error) setGuardado(true)
+                }}
+                className="w-full mt-2 py-[7px] text-xs font-semibold border border-accent rounded-sm bg-accent-light text-accent cursor-pointer active:scale-[0.98] transition-transform"
+              >
+                Guardar como preparación
+              </button>
+            )}
           </div>
         )}
       </div>

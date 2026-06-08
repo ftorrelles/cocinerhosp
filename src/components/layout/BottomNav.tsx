@@ -6,6 +6,7 @@ import {
   IconClipboardList,
   IconChartBar,
   IconUsers,
+  IconBook,
 } from '@tabler/icons-react'
 import { useAppStore } from '../../store/useAppStore'
 
@@ -18,6 +19,7 @@ interface TabDef {
 
 const ALL_TABS: TabDef[] = [
   { to: '/', label: 'Calcular', icon: IconCalculator },
+  { to: '/recetas', label: 'Recetas', icon: IconBook },
   { to: '/blandas', label: 'Blandas', icon: IconBowlSpoon },
   { to: '/registrar', label: 'Registrar', icon: IconClipboardList },
   { to: '/dashboard', label: 'Dashboard', icon: IconChartBar },

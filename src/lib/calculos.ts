@@ -118,3 +118,24 @@ export function calcularDesgloseCentros(params: {
       unidades: params.unidadesPorRacion * (params.servicio === 'almuerzo' ? c.paxAlmuerzo : c.paxCena),
     }))
 }
+
+// ── ESCALADO DE RECETAS ──
+
+export interface IngredienteEscalable {
+  nombre: string
+  cantidad: number
+  unidad: string
+}
+
+export function escalarIngredientes(
+  ingredientes: IngredienteEscalable[],
+  totalPacientes: number,
+  racionesBase: number,
+): IngredienteEscalable[] {
+  if (racionesBase <= 0 || totalPacientes <= 0) return ingredientes
+  const factor = totalPacientes / racionesBase
+  return ingredientes.map((ing) => ({
+    ...ing,
+    cantidad: Math.round(ing.cantidad * factor * 100) / 100,
+  }))
+}

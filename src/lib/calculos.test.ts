@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calcularProteina, calcularGuarnicion, calcularBandejasHorno, calcularDesgloseCentros } from './calculos'
+import { calcularProteina, calcularGuarnicion, calcularBandejasHorno, calcularDesgloseCentros, escalarIngredientes } from './calculos'
 import { CENTROS } from '../data/centros'
 
 describe('calcularProteina', () => {
@@ -167,5 +167,35 @@ describe('calcularDesgloseCentros', () => {
     const candelaria = result.find((c) => c.nombre === 'Candelaria')
     expect(candelaria?.pax).toBe(30)
     expect(candelaria?.unidades).toBe(30)
+  })
+})
+
+describe('escalarIngredientes', () => {
+  it('414 pacientes, 12 raciones base, 2kg → 69kg', () => {
+    const result = escalarIngredientes(
+      [{ nombre: 'Pollo', cantidad: 2, unidad: 'kg' }],
+      414, 12,
+    )
+    expect(result[0].cantidad).toBe(69)
+  })
+
+  it('raciones_base=0 devuelve ingredientes sin cambios', () => {
+    const input = [{ nombre: 'Pollo', cantidad: 2, unidad: 'kg' }]
+    const result = escalarIngredientes(input, 414, 0)
+    expect(result).toEqual(input)
+  })
+
+  it('múltiples ingredientes escalan proporcionalmente', () => {
+    const result = escalarIngredientes(
+      [
+        { nombre: 'Huevo', cantidad: 12, unidad: 'unidades' },
+        { nombre: 'Queso', cantidad: 400, unidad: 'g' },
+        { nombre: 'Jamón', cantidad: 300, unidad: 'g' },
+      ],
+      414, 12,
+    )
+    expect(result[0].cantidad).toBe(414)
+    expect(result[1].cantidad).toBe(13800)
+    expect(result[2].cantidad).toBe(10350)
   })
 })

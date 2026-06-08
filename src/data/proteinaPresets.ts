@@ -11,5 +11,4 @@ export const PROTEINA_PRESETS: ProteinaPreset[] = [
   { nombre: 'Pescado', caja: 10, racion: 1, unidad: 'filetes' },
   { nombre: 'Albóndigas', caja: 52, racion: 5, unidad: 'albóndigas' },
   { nombre: 'Hamburguesa', caja: 52, racion: 1, unidad: 'carnes' },
-  { nombre: 'Quiché', caja: 0, racion: 0, unidad: 'porciones' },
 ]

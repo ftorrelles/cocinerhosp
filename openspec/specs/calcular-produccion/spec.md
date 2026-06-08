@@ -90,7 +90,8 @@ Each numeric input SHALL use local `useState` while the user is editing. The sys
 
 ### Requirement: Chip "＋Otro" para preparaciones personalizadas
 
-Each tab MUST show preset chips plus a trailing "＋Otro" chip. When tapped, "＋Otro" SHALL expand a custom form with empty fields where the user can define a fully custom preparation.
+Each tab MUST show preset chips plus a trailing "＋Otro" chip. The preset chips SHALL NOT include Quiché. When tapped, "＋Otro" SHALL expand a custom form with empty fields where the user can define a fully custom preparation.
+(Previously: Quiché was included as a preset chip; removed because it is no longer served)
 
 #### Scenario: Agregar proteína personalizada
 
@@ -98,6 +99,33 @@ Each tab MUST show preset chips plus a trailing "＋Otro" chip. When tapped, "�
 - WHEN the user taps "＋Otro"
 - THEN a custom form appears with empty name, udsCaja, udsRacion, nomUnidad, and merma fields
 - AND the preset chips are replaced by the custom form
+
+### Requirement: Botón "Guardar como preparación" en resultado inline
+
+After a calculation result is displayed, the system MUST show a "Guardar como preparación" button below the result. When tapped, the system MUST persist the preparation to the historial using `useHistorial().addRegistro()` with the preparation name, current service, and total patient count, then display a confirmation "Preparación guardada ✓" without redirecting.
+
+#### Scenario: Guardar preparación desde proteína
+
+- GIVEN the user calculated Albóndigas with 414 patients showing the result
+- WHEN the user taps "Guardar como preparación"
+- THEN the system calls `addRegistro({ plato: 'Albóndigas', servicio: 'Almuerzo', raciones: 414 })`
+- AND shows "Preparación guardada ✓" inline
+
+#### Scenario: Guardar preparación desde guarnición
+
+- GIVEN the user calculated Habichuelas with 324 patients showing the result
+- WHEN the user taps "Guardar como preparación"
+- THEN the system persists with correct plato, servicio and raciones
+
+#### Scenario: Botón oculto sin resultado
+
+- GIVEN the user has not calculated yet
+- THEN the "Guardar como preparación" button is not shown
+
+#### Scenario: Botón usa el nombre de la preparación
+
+- GIVEN a custom preparation named "Ensalada especial" with a result
+- THEN the button uses "Ensalada especial" as the plato value
 
 ## Notes
 

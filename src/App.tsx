@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import Calcular from './pages/Calcular'
+import Recetas from './pages/Recetas'
 import Blandas from './pages/Blandas'
 import Registrar from './pages/Registrar'
 import Dashboard from './pages/Dashboard'
@@ -16,6 +17,7 @@ export default function App() {
 
       <Route element={<ProtectedLayout />}>
         <Route path="/" element={<Calcular />} />
+        <Route path="/recetas" element={<Recetas />} />
         <Route path="/blandas" element={<Blandas />} />
         <Route path="/registrar" element={<Registrar />} />
         <Route path="/dashboard" element={<Dashboard />} />
