@@ -255,18 +255,16 @@ export default function Dashboard() {
         {hasData && data ? (
           <>
             <MetricCard label="Barquetas este mes" value={barquetas(data.total_raciones)} color="#1B5E3F" bg="#E8F3ED" />
-            <MetricCard label="Elaboraciones" value={data.total_elaboraciones} color="#1E3A5F" bg="#EFF6FF" />
-            <MetricCard label="Días con registro" value={data.dias_con_registro} color="#6B3FA0" bg="#F3EEFF" />
             <MetricCard label="Media barquetas/día" value={barquetas(data.media_diaria)} color="#B45309" bg="#FEF3C7" />
-            <MetricCard label="Hechos hoy" value={barquetas(hechosHoyLocal)} color="#059669" bg="#ECFDF5" />
+            <MetricCard label="Elaboraciones" value={data.total_elaboraciones} color="#1E3A5F" bg="#EFF6FF" />
+            <MetricCard label="Barquetas hoy" value={barquetas(hechosHoyLocal)} color="#059669" bg="#ECFDF5" />
           </>
         ) : (
           <>
             <MetricCard label="Barquetas este mes" value={0} color="#1B5E3F" bg="#E8F3ED" />
-            <MetricCard label="Elaboraciones" value={0} color="#1E3A5F" bg="#EFF6FF" />
-            <MetricCard label="Días con registro" value={0} color="#6B3FA0" bg="#F3EEFF" />
             <MetricCard label="Media barquetas/día" value={0} color="#B45309" bg="#FEF3C7" />
-            <MetricCard label="Hechos hoy" value={0} color="#059669" bg="#ECFDF5" />
+            <MetricCard label="Elaboraciones" value={0} color="#1E3A5F" bg="#EFF6FF" />
+            <MetricCard label="Barquetas hoy" value={0} color="#059669" bg="#ECFDF5" />
           </>
         )}
       </div>
