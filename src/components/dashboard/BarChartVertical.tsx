@@ -20,7 +20,7 @@ export default function BarChartVertical({
   const BAR_MAX_H = 120
 
   return (
-    <div className="flex items-end justify-between gap-[6px] h-[130px]">
+    <div className="flex items-end justify-between gap-[6px] h-[170px]">
       {loading ? (
         <div className="w-full text-center text-xs text-text3 py-10">Cargando...</div>
       ) : (

@@ -271,7 +271,7 @@ export default function Dashboard() {
 
       {/* Weekly production chart */}
       <div className="bg-surface border border-border rounded-xl p-[14px] mb-[10px] shadow-sm">
-        <div className="flex items-center justify-between mb-[10px]">
+        <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => setSemanaOffset((p) => p - 1)}
             className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer shrink-0 leading-none"
@@ -303,7 +303,7 @@ export default function Dashboard() {
 
       {/* Monthly production chart */}
       <div className="bg-surface border border-border rounded-xl p-[14px] mb-[10px] shadow-sm">
-        <div className="flex items-center justify-between mb-[10px]">
+        <div className="flex items-center justify-between mb-4">
           <button
             onClick={() => setMesOffset((p) => p - 1)}
             className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer shrink-0 leading-none"
