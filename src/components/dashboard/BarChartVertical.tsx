@@ -33,17 +33,17 @@ export default function BarChartVertical({
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={onPrev}
-          className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer"
+          className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer shrink-0"
           aria-label="Anterior"
         >
           <IconArrowLeft size={16} />
         </button>
-        <span className="text-sm font-semibold text-text text-center">
+        <span className="flex-1 text-sm font-semibold text-text text-center px-2">
           {title}
         </span>
         <button
           onClick={onNext}
-          className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer"
+          className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer shrink-0"
           aria-label="Siguiente"
         >
           <IconArrowRight size={16} />

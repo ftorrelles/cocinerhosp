@@ -82,6 +82,10 @@ function barquetas(val: number): number {
   return Math.round(val / 10)
 }
 
+function getTodayLocal(): string {
+  return new Date().toLocaleDateString('sv-SE')
+}
+
 export default function Dashboard() {
   const { user } = useAuth()
   const currentUser = useAppStore((s) => s.user)
@@ -155,6 +159,14 @@ export default function Dashboard() {
     const firstWeek = currentWeekNum
     return monthlyBars.findIndex((_, i) => firstWeek + i === currentWeekNum)
   }, [mesOffset, currentWeekNum, monthlyBars])
+
+  const hechosHoyLocal = useMemo(() => {
+    if (!data) return 0
+    const today = getTodayLocal()
+    return data.ultimos_registros
+      .filter((r) => r.fecha === today)
+      .reduce((sum, r) => sum + r.raciones, 0)
+  }, [data])
 
   useEffect(() => {
     if (!puedeFiltrar) return
@@ -246,7 +258,7 @@ export default function Dashboard() {
             <MetricCard label="Elaboraciones" value={data.total_elaboraciones} color="#1E3A5F" bg="#EFF6FF" />
             <MetricCard label="Días con registro" value={data.dias_con_registro} color="#6B3FA0" bg="#F3EEFF" />
             <MetricCard label="Media barquetas/día" value={barquetas(data.media_diaria)} color="#B45309" bg="#FEF3C7" />
-            <MetricCard label="Hechos hoy" value={barquetas(data.hechos_hoy)} color="#059669" bg="#ECFDF5" />
+            <MetricCard label="Hechos hoy" value={barquetas(hechosHoyLocal)} color="#059669" bg="#ECFDF5" />
           </>
         ) : (
           <>
