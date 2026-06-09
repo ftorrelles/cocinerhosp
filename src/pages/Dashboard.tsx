@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { IconChartBar, IconList, IconAlertCircle, IconChefHat } from '@tabler/icons-react'
+import { IconChartBar, IconList, IconAlertCircle, IconChefHat, IconArrowLeft, IconArrowRight } from '@tabler/icons-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { useDashboard } from '../hooks/useDashboard'
@@ -270,31 +270,67 @@ export default function Dashboard() {
       </div>
 
       {/* Weekly production chart */}
-      <BarChartVertical
-        data={weeklyBars}
-        maxValue={weeklyMax}
-        highlightIndex={todayIndex}
-        labels={DAY_LABELS}
-        subLabels={weeklySubLabels}
-        unit="barq."
-        title={weekTitle}
-        onPrev={() => setSemanaOffset((p) => p - 1)}
-        onNext={() => setSemanaOffset((p) => p + 1)}
-        loading={diaLoading}
-      />
+      <div className="bg-surface border border-border rounded-xl p-[14px] mb-[10px] shadow-sm">
+        <div className="flex items-center justify-between mb-[10px]">
+          <button
+            onClick={() => setSemanaOffset((p) => p - 1)}
+            className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer shrink-0 leading-none"
+            aria-label="Semana anterior"
+          >
+            <IconArrowLeft size={16} />
+          </button>
+          <span className="flex-1 text-sm font-semibold text-text text-center px-2 leading-tight">
+            {weekTitle}
+          </span>
+          <button
+            onClick={() => setSemanaOffset((p) => p + 1)}
+            className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer shrink-0 leading-none"
+            aria-label="Semana siguiente"
+          >
+            <IconArrowRight size={16} />
+          </button>
+        </div>
+        <BarChartVertical
+          data={weeklyBars}
+          maxValue={weeklyMax}
+          highlightIndex={todayIndex}
+          labels={DAY_LABELS}
+          subLabels={weeklySubLabels}
+          unit="barq."
+          loading={diaLoading}
+        />
+      </div>
 
       {/* Monthly production chart */}
-      <BarChartVertical
-        data={monthlyBars}
-        maxValue={monthlyMax}
-        highlightIndex={monthHighlight}
-        labels={monthlyLabels}
-        unit="barq."
-        title={monthTitle}
-        onPrev={() => setMesOffset((p) => p - 1)}
-        onNext={() => setMesOffset((p) => p + 1)}
-        loading={semLoading}
-      />
+      <div className="bg-surface border border-border rounded-xl p-[14px] mb-[10px] shadow-sm">
+        <div className="flex items-center justify-between mb-[10px]">
+          <button
+            onClick={() => setMesOffset((p) => p - 1)}
+            className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer shrink-0 leading-none"
+            aria-label="Mes anterior"
+          >
+            <IconArrowLeft size={16} />
+          </button>
+          <span className="flex-1 text-sm font-semibold text-text text-center px-2 leading-tight">
+            {monthTitle}
+          </span>
+          <button
+            onClick={() => setMesOffset((p) => p + 1)}
+            className="p-1 border border-border rounded-sm bg-surface text-text2 hover:bg-surface2 cursor-pointer shrink-0 leading-none"
+            aria-label="Mes siguiente"
+          >
+            <IconArrowRight size={16} />
+          </button>
+        </div>
+        <BarChartVertical
+          data={monthlyBars}
+          maxValue={monthlyMax}
+          highlightIndex={monthHighlight}
+          labels={monthlyLabels}
+          unit="barq."
+          loading={semLoading}
+        />
+      </div>
 
       {/* Top platos */}
       <div className="bg-surface border border-border rounded-xl p-[14px] mb-[10px] shadow-sm">
