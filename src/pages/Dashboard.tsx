@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { IconChartBar, IconList, IconAlertCircle, IconChefHat } from '@tabler/icons-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../hooks/useAuth'
 import { useDashboard } from '../hooks/useDashboard'
+import { useProduccionPorDia } from '../hooks/useProduccionPorDia'
+import { useProduccionPorSemana } from '../hooks/useProduccionPorSemana'
 import { useAppStore } from '../store/useAppStore'
 import Spinner from '../components/ui/Spinner'
+import BarChartVertical from '../components/dashboard/BarChartVertical'
 
 const CATEGORIAS = [
   { key: '', label: 'Todas' },
@@ -14,10 +17,69 @@ const CATEGORIAS = [
   { key: 'receta', label: 'Recetas' },
 ] as const
 
+const DAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+
 interface ChefOption {
   id: string
   nombre_completo: string
   rol: string
+}
+
+function getWeekRange(offset: number): { desde: string; hasta: string; dates: Date[] } {
+  const now = new Date()
+  const day = now.getDay()
+  const monOffset = day === 0 ? -6 : 1 - day
+  const monday = new Date(now)
+  monday.setDate(now.getDate() + monOffset + offset * 7)
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+
+  const dates: Date[] = []
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday)
+    d.setDate(monday.getDate() + i)
+    dates.push(d)
+  }
+
+  const fmt = (d: Date) => {
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
+  return { desde: fmt(monday), hasta: fmt(sunday), dates }
+}
+
+function getTodayIndex(): number {
+  const day = new Date().getDay()
+  return day === 0 ? 6 : day - 1
+}
+
+function getCurrentMonthOffset(offset: number): string {
+  const now = new Date()
+  now.setMonth(now.getMonth() + offset)
+  const y = now.getFullYear()
+  const m = String(now.getMonth() + 1).padStart(2, '0')
+  return `${y}-${m}`
+}
+
+function getMonthLabel(offset: number): string {
+  const now = new Date()
+  now.setMonth(now.getMonth() + offset)
+  return `${MONTHS[now.getMonth()]} ${now.getFullYear()}`
+}
+
+function getCurrentWeekNumber(): number {
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 1)
+  const diff = now.getTime() - start.getTime()
+  return Math.ceil(((diff / 86400000) + start.getDay() + 1) / 7)
+}
+
+function barquetas(val: number): number {
+  return Math.round(val / 10)
 }
 
 export default function Dashboard() {
@@ -30,12 +92,69 @@ export default function Dashboard() {
     puedeFiltrar ? undefined : user?.id,
   )
   const [selectedCategoria, setSelectedCategoria] = useState('')
+  const [semanaOffset, setSemanaOffset] = useState(0)
+  const [mesOffset, setMesOffset] = useState(0)
 
-  const { data, loading, error } = useDashboard(
-    puedeFiltrar ? selectedChefId : user?.id,
-    undefined,
-    selectedCategoria || undefined,
+  const categoriaParam = selectedCategoria || undefined
+  const usuarioId = puedeFiltrar ? selectedChefId : user?.id
+
+  const { data, loading, error } = useDashboard(usuarioId, undefined, categoriaParam)
+
+  const weekRange = useMemo(() => getWeekRange(semanaOffset), [semanaOffset])
+  const currentWeekNum = getCurrentWeekNumber()
+
+  const todayIndex = semanaOffset === 0 ? getTodayIndex() : -1
+
+  const { data: diaData, loading: diaLoading } = useProduccionPorDia(
+    usuarioId,
+    weekRange.desde,
+    weekRange.hasta,
+    categoriaParam,
   )
+
+  const currentMonth = useMemo(() => getCurrentMonthOffset(mesOffset), [mesOffset])
+
+  const { data: semData, loading: semLoading } = useProduccionPorSemana(
+    usuarioId,
+    currentMonth,
+    categoriaParam,
+  )
+
+  const weeklyBars = useMemo(() => {
+    const map = new Map(diaData.map((d) => [d.fecha, d.total_raciones]))
+    return weekRange.dates.map((d) => {
+      const y = d.getFullYear()
+      const m = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      const key = `${y}-${m}-${day}`
+      return barquetas(map.get(key) ?? 0)
+    })
+  }, [diaData, weekRange])
+
+  const weeklyMax = Math.max(...weeklyBars, 1)
+
+  const weeklySubLabels = useMemo(() =>
+    weekRange.dates.map((d) => `${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`),
+  [weekRange])
+
+  const monthlyBars = useMemo(() => {
+    const map = new Map(semData.map((s) => [s.semana, s.total_raciones]))
+    const weeks: number[] = []
+    for (let i = 0; i < 5; i++) {
+      const w = currentWeekNum + i
+      weeks.push(barquetas(map.get(w) ?? 0))
+    }
+    return weeks
+  }, [semData, currentWeekNum])
+
+  const monthlyMax = Math.max(...monthlyBars, 1)
+  const monthlyLabels = useMemo(() => ['S1', 'S2', 'S3', 'S4', 'S5'], [])
+
+  const monthHighlight = useMemo(() => {
+    if (mesOffset !== 0) return -1
+    const firstWeek = currentWeekNum
+    return monthlyBars.findIndex((_, i) => firstWeek + i === currentWeekNum)
+  }, [mesOffset, currentWeekNum, monthlyBars])
 
   useEffect(() => {
     if (!puedeFiltrar) return
@@ -50,6 +169,13 @@ export default function Dashboard() {
         setChefs((d as ChefOption[]) ?? [])
       })
   }, [puedeFiltrar])
+
+  const weekTitle = useMemo(() => {
+    const f = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()].slice(0, 3)}`
+    return `Semana — ${f(weekRange.dates[0])} – ${f(weekRange.dates[6])}`
+  }, [weekRange])
+
+  const monthTitle = useMemo(() => `Mes — ${getMonthLabel(mesOffset)}`, [mesOffset])
 
   const renderChefFilter = () => {
     if (!puedeFiltrar) return null
@@ -112,26 +238,53 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Metric cards */}
+      {/* Metric cards (barquetas) */}
       <div className="grid grid-cols-2 gap-[10px] mb-[10px]">
         {hasData && data ? (
           <>
-            <MetricCard label="Raciones este mes" value={data.total_raciones} color="#1B5E3F" bg="#E8F3ED" />
+            <MetricCard label="Barquetas este mes" value={barquetas(data.total_raciones)} color="#1B5E3F" bg="#E8F3ED" />
             <MetricCard label="Elaboraciones" value={data.total_elaboraciones} color="#1E3A5F" bg="#EFF6FF" />
             <MetricCard label="Días con registro" value={data.dias_con_registro} color="#6B3FA0" bg="#F3EEFF" />
-            <MetricCard label="Media raciones/día" value={data.media_diaria} color="#B45309" bg="#FEF3C7" />
-            <MetricCard label="Hechos hoy" value={data.hechos_hoy} color="#059669" bg="#ECFDF5" />
+            <MetricCard label="Media barquetas/día" value={barquetas(data.media_diaria)} color="#B45309" bg="#FEF3C7" />
+            <MetricCard label="Hechos hoy" value={barquetas(data.hechos_hoy)} color="#059669" bg="#ECFDF5" />
           </>
         ) : (
           <>
-            <MetricCard label="Raciones este mes" value={0} color="#1B5E3F" bg="#E8F3ED" />
+            <MetricCard label="Barquetas este mes" value={0} color="#1B5E3F" bg="#E8F3ED" />
             <MetricCard label="Elaboraciones" value={0} color="#1E3A5F" bg="#EFF6FF" />
             <MetricCard label="Días con registro" value={0} color="#6B3FA0" bg="#F3EEFF" />
-            <MetricCard label="Media raciones/día" value={0} color="#B45309" bg="#FEF3C7" />
+            <MetricCard label="Media barquetas/día" value={0} color="#B45309" bg="#FEF3C7" />
             <MetricCard label="Hechos hoy" value={0} color="#059669" bg="#ECFDF5" />
           </>
         )}
       </div>
+
+      {/* Weekly production chart */}
+      <BarChartVertical
+        data={weeklyBars}
+        maxValue={weeklyMax}
+        highlightIndex={todayIndex}
+        labels={DAY_LABELS}
+        subLabels={weeklySubLabels}
+        unit="barq."
+        title={weekTitle}
+        onPrev={() => setSemanaOffset((p) => p - 1)}
+        onNext={() => setSemanaOffset((p) => p + 1)}
+        loading={diaLoading}
+      />
+
+      {/* Monthly production chart */}
+      <BarChartVertical
+        data={monthlyBars}
+        maxValue={monthlyMax}
+        highlightIndex={monthHighlight}
+        labels={monthlyLabels}
+        unit="barq."
+        title={monthTitle}
+        onPrev={() => setMesOffset((p) => p - 1)}
+        onNext={() => setMesOffset((p) => p + 1)}
+        loading={semLoading}
+      />
 
       {/* Top platos */}
       <div className="bg-surface border border-border rounded-xl p-[14px] mb-[10px] shadow-sm">
@@ -155,7 +308,7 @@ export default function Dashboard() {
                   <div key={p.plato}>
                     <div className="flex items-center justify-between text-[12px] mb-1">
                       <span className="text-text font-medium">{p.plato}</span>
-                      <span className="text-text2">{p.raciones} rac.</span>
+                      <span className="text-text2">{barquetas(p.raciones)} barq.</span>
                     </div>
                     <div className="h-[6px] bg-bg rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: '#1B5E3F' }} />
@@ -189,7 +342,9 @@ export default function Dashboard() {
                   <span className="text-[11px] font-mono text-text3">{r.fecha}</span>
                 </div>
                 <div className="text-[12px] text-text2">
-                  {r.raciones} raciones · {r.servicio}
+                  <span className="font-medium text-text">{barquetas(r.raciones)} barq.</span>
+                  <span className="text-text3"> ({r.raciones} raciones)</span>
+                  {' · '}{r.servicio}
                   {r.chef ? ` · ${r.chef}` : ''}
                   {r.categoria ? ` · ${r.categoria}` : ''}
                 </div>
