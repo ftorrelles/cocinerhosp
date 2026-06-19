@@ -5,15 +5,15 @@ import { CENTROS } from '../data/centros'
 import Spinner from '../components/ui/Spinner'
 
 const ROLES = [
-  { value: 'chef', label: 'Chef' },
-  { value: 'chef_jefe', label: 'Chef Jefe' },
+  { value: 'cocinero', label: 'Cocinero' },
+  { value: 'chef_ejecutivo', label: 'Chef Ejecutivo' },
   { value: 'admin', label: 'Admin' },
 ]
 
 export default function Usuarios() {
   const { usuarios, loading, error, crearUsuario, toggleUsuario, cambiarPinAdmin, refresh } = useUsuarios()
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState<CrearUsuarioInput>({ nombre: '', username: '', pin: '', rol: 'chef' })
+  const [form, setForm] = useState<CrearUsuarioInput>({ nombre: '', username: '', pin: '', rol: 'cocinero' })
   const [formError, setFormError] = useState<string | null>(null)
   const [formLoading, setFormLoading] = useState(false)
   const [formSuccess, setFormSuccess] = useState(false)
@@ -22,7 +22,7 @@ export default function Usuarios() {
   const [pinChangeError, setPinChangeError] = useState<string | null>(null)
 
   const resetForm = () => {
-    setForm({ nombre: '', username: '', pin: '', rol: 'chef' })
+    setForm({ nombre: '', username: '', pin: '', rol: 'cocinero' })
     setFormError(null)
     setFormSuccess(false)
   }

@@ -89,7 +89,7 @@ function getTodayLocal(): string {
 export default function Dashboard() {
   const { user } = useAuth()
   const currentUser = useAppStore((s) => s.user)
-  const puedeFiltrar = currentUser?.rol === 'admin' || currentUser?.rol === 'chef_jefe'
+  const puedeFiltrar = currentUser?.rol === 'admin' || currentUser?.rol === 'chef_ejecutivo'
 
   const [chefs, setChefs] = useState<ChefOption[]>([])
   const [selectedChefId, setSelectedChefId] = useState<string | undefined>(

@@ -18,7 +18,7 @@ export default function Recetas() {
   const user = useAppStore((s) => s.user)
   const totalPacientes = Object.values(pacientes).reduce((a, b) => a + b, 0)
   const { recetas, loading, error, createReceta, updateReceta, deleteReceta } = useRecetas()
-  const canWrite = user?.rol === 'admin' || user?.rol === 'chef_jefe'
+  const canWrite = user?.rol === 'admin' || user?.rol === 'chef_ejecutivo'
 
   const [modalMode, setModalMode] = useState<ModalMode>(null)
   const [editReceta, setEditReceta] = useState<Receta | null>(null)
