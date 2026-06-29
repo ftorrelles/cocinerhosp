@@ -1,59 +1,70 @@
-// ── Dietas Blandas — Producción Fija Diaria ──
-// Fuente: PRD sección 1.6
+// ── Dietas Blandas — Recetas Escalables ──
+// Cada receta tiene ingredientes base para X barquetas de referencia
+// La calculadora escala linealmente según las barquetas que el usuario necesite
 
-export interface Chino {
-  tipo: string
-  ingredientes: string
-  bolsas: number
-  brutoKg: number
-}
-
-export interface MolidoIngrediente {
+export interface IngredienteReceta {
   nombre: string
-  cantidad: string
+  cantidadBase: number   // cantidad para barquetasBase
+  unidad: string         // 'bolsas', 'kg', 'g', 'unidades'
+  nota?: string          // info extra (ej: "2.5 kg/bolsa")
 }
 
-export interface MolidoProteina {
-  tipo: string
-  kgBruto: number
+export interface RecetaBlando {
+  id: string
+  nombre: string
+  seccion: 'chinos' | 'molido' | 'pure'
+  subtipo?: string
+  ingredientes: IngredienteReceta[]
+  barquetasBase: number
 }
 
-export interface PureData {
-  bolsasPapa: number
-  kgBruto: number
-  mermaP: number
-  mermaKg: number
-  papaCocidaKg: number
+export interface ResultadoBlando {
+  recetaId: string
+  barquetas: number
+  ingredientes: IngredienteReceta[]
+  totalKg: number
+  observaciones: string[]
 }
 
-export interface ResumenBolsas {
-  papas: number
-  zanahoria: number
-  calabaza: number
-  calabacin: number
-  total: number
-}
+// ── CHINOS — 1 gastro = 6 barquetas ──
+// Cada chino se prepara por separado: papas + verdura + cebolla
 
-// ── Chinos (triturados) ──
-
-export const CHINOS: Chino[] = [
+export const CHINOS_RECETAS: RecetaBlando[] = [
   {
-    tipo: 'Zanahoria',
-    ingredientes: '3 papas + 1 zanahoria',
-    bolsas: 4,
-    brutoKg: 10,
+    id: 'chino-zanahoria',
+    nombre: 'Chino Zanahoria',
+    seccion: 'chinos',
+    subtipo: 'Zanahoria',
+    barquetasBase: 6, // 1 gastro
+    ingredientes: [
+      { nombre: 'Papas congeladas', cantidadBase: 3, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Zanahoria congelada', cantidadBase: 1, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Cebolla', cantidadBase: 6, unidad: 'unidades' },
+    ],
   },
   {
-    tipo: 'Calabaza',
-    ingredientes: '3 papas + 1 calabaza',
-    bolsas: 4,
-    brutoKg: 10,
+    id: 'chino-calabaza',
+    nombre: 'Chino Calabaza',
+    seccion: 'chinos',
+    subtipo: 'Calabaza',
+    barquetasBase: 6,
+    ingredientes: [
+      { nombre: 'Papas congeladas', cantidadBase: 3, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Calabaza congelada', cantidadBase: 1, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Cebolla', cantidadBase: 6, unidad: 'unidades' },
+    ],
   },
   {
-    tipo: 'Calabacín',
-    ingredientes: '3 papas + 1 calabacín',
-    bolsas: 4,
-    brutoKg: 10,
+    id: 'chino-calabacin',
+    nombre: 'Chino Calabacín',
+    seccion: 'chinos',
+    subtipo: 'Calabacín',
+    barquetasBase: 6,
+    ingredientes: [
+      { nombre: 'Papas congeladas', cantidadBase: 3, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Calabacín congelado', cantidadBase: 1, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Cebolla', cantidadBase: 6, unidad: 'unidades' },
+    ],
   },
 ]
 
@@ -61,48 +72,110 @@ export const CHINOS_BARQUETAS = 22
 export const CHINOS_KG_BARQUETA = 3
 export const CHINOS_TOTAL_KG = 66
 
-// ── Molido ──
+// ── MOLIDO — base 20 barquetas ──
 
-export const MOLIDO_INGREDIENTES: MolidoIngrediente[] = [
-  { nombre: 'Calabacín congelado', cantidad: '2 bolsas (5 kg)' },
-  { nombre: 'Zanahoria congelada', cantidad: '1 bolsa (2.5 kg)' },
-  { nombre: 'Cebolla fresca', cantidad: '~1 kg' },
-  { nombre: 'Pimiento fresco', cantidad: '~1 kg' },
-  { nombre: 'Ajo', cantidad: '~100 g' },
-  { nombre: 'Cilantro', cantidad: '~50 g' },
-  { nombre: 'Fécula de maíz', cantidad: '~400 g' },
-  { nombre: 'Agua/caldo', cantidad: 'hasta 60 kg' },
+export const MOLIDO_RECETAS: RecetaBlando[] = [
+  {
+    id: 'molido',
+    nombre: 'Molido',
+    seccion: 'molido',
+    barquetasBase: 20,
+    ingredientes: [
+      { nombre: 'Calabacín congelado', cantidadBase: 2, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Zanahoria congelada', cantidadBase: 1, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Cebolla fresca', cantidadBase: 1000, unidad: 'g' },
+      { nombre: 'Pimiento fresco', cantidadBase: 1000, unidad: 'g' },
+      { nombre: 'Ajo', cantidadBase: 100, unidad: 'g' },
+      { nombre: 'Cilantro', cantidadBase: 50, unidad: 'g' },
+      { nombre: 'Fécula de maíz', cantidadBase: 400, unidad: 'g' },
+      { nombre: 'Agua/caldo', cantidadBase: 60000, unidad: 'g' },
+    ],
+  },
+]
+
+export const MOLIDO_PROTEINA = [
+  { tipo: 'Pollo', kgBruto: 8.6 },
+  { tipo: 'Cerdo', kgBruto: 7.3 },
 ]
 
 export const MOLIDO_BARQUETAS = 20
 export const MOLIDO_KG_BARQUETA = 3
 export const MOLIDO_TOTAL_KG = 60
 
-export const MOLIDO_PROTEINA: MolidoProteina[] = [
-  { tipo: 'Pollo', kgBruto: 8.6 },
-  { tipo: 'Cerdo', kgBruto: 7.3 },
+// ── PURÉ DE PAPAS — base 22 barquetas ──
+
+export const PURE_RECETAS: RecetaBlando[] = [
+  {
+    id: 'pure',
+    nombre: 'Puré de papas',
+    seccion: 'pure',
+    barquetasBase: 22,
+    ingredientes: [
+      { nombre: 'Papas congeladas', cantidadBase: 32, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+    ],
+  },
 ]
 
-// ── Puré de papas ──
-
-export const PURE: PureData = {
-  bolsasPapa: 32,
-  kgBruto: 80,
-  mermaP: 15,
-  mermaKg: 12,
-  papaCocidaKg: 68,
-}
-
+export const PURE_MERMA_P = 15
 export const PURE_BARQUETAS = 22
 export const PURE_KG_BARQUETA = 3
 export const PURE_TOTAL_KG = 66
 
-// ── Resumen ──
+// ── Helper: escalar receta ──
 
-export const RESUMEN_BOLSAS: ResumenBolsas = {
-  papas: 41,
-  zanahoria: 2,
-  calabaza: 1,
-  calabacin: 3,
-  total: 47,
+export function escalarReceta(
+  receta: RecetaBlando,
+  barquetasDeseadas: number,
+): ResultadoBlando {
+  const factor = barquetasDeseadas / receta.barquetasBase
+  const ingredientes = receta.ingredientes.map((ing) => ({
+    ...ing,
+    cantidadBase: Math.round(ing.cantidadBase * factor * 100) / 100,
+  }))
+
+  const observaciones: string[] = []
+  let totalKg = 0
+
+  for (const ing of ingredientes) {
+    if (ing.nota?.includes('kg/bolsa')) {
+      const kgPorBolsa = parseFloat(ing.nota.match(/([\d.]+)\s*kg\/bolsa/)?.[1] ?? '0')
+      totalKg += ing.cantidadBase * kgPorBolsa
+    } else if (ing.unidad === 'g' && ing.cantidadBase >= 1000) {
+      totalKg += ing.cantidadBase / 1000
+    } else if (ing.unidad === 'kg') {
+      totalKg += ing.cantidadBase
+    }
+  }
+
+  if (receta.seccion === 'pure') {
+    const mermaLost = totalKg * (PURE_MERMA_P / 100)
+    const netoKg = totalKg - mermaLost
+    observaciones.push(`Merma ${PURE_MERMA_P}%: −${Math.round(mermaLost)} kg`)
+    observaciones.push(`Papa cocida disponible: ~${Math.round(netoKg)} kg`)
+    observaciones.push('Sal + aceite al gusto (~300-400 ml aceite)')
+  }
+
+  if (receta.seccion === 'molido') {
+    observaciones.push('Proteína variable (según día)')
+  }
+
+  totalKg = Math.round(totalKg * 100) / 100
+
+  return { recetaId: receta.id, barquetas: barquetasDeseadas, ingredientes, totalKg, observaciones }
+}
+
+// ── Obtener receta por ID ──
+
+export function getRecetaBlando(id: string): RecetaBlando | undefined {
+  return [...CHINOS_RECETAS, ...MOLIDO_RECETAS, ...PURE_RECETAS].find((r) => r.id === id)
+}
+
+// ── Obtener todas las recetas de una sección ──
+
+export function getRecetasBySeccion(seccion: 'chinos' | 'molido' | 'pure'): RecetaBlando[] {
+  switch (seccion) {
+    case 'chinos': return CHINOS_RECETAS
+    case 'molido': return MOLIDO_RECETAS
+    case 'pure': return PURE_RECETAS
+  }
 }

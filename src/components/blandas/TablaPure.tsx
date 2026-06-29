@@ -1,17 +1,35 @@
 import { useState } from 'react'
-import { IconCarrot, IconCheck } from '@tabler/icons-react'
+import { IconCarrot, IconCalculator, IconCheck } from '@tabler/icons-react'
 import { useAppStore } from '../../store/useAppStore'
 import { useHistorial } from '../../hooks/useHistorial'
-import { PURE, PURE_BARQUETAS, PURE_KG_BARQUETA, PURE_TOTAL_KG } from '../../data/blandas'
+import {
+  PURE_RECETAS,
+  PURE_BARQUETAS,
+  PURE_KG_BARQUETA,
+  PURE_TOTAL_KG,
+  escalarReceta,
+  type ResultadoBlando,
+} from '../../data/blandas'
+
+const PURE_RECETA = PURE_RECETAS[0]!
 
 export default function TablaPure() {
   const user = useAppStore((s) => s.user)
   const servicio = useAppStore((s) => s.servicio)
   const { addRegistro } = useHistorial(user?.id)
-  const [barquetas, setBarquetas] = useState(String(PURE_BARQUETAS))
+
+  const [barquetas, setBarquetas] = useState('')
+  const [resultado, setResultado] = useState<ResultadoBlando | null>(null)
   const [guardado, setGuardado] = useState(false)
 
-  const handleGuardar = async () => {
+  const handleCalcular = () => {
+    const b = parseInt(barquetas) || 0
+    if (b < 1) return
+    setResultado(escalarReceta(PURE_RECETA, b))
+    setGuardado(false)
+  }
+
+  const handleRegistrar = async () => {
     const b = parseInt(barquetas) || 0
     if (b < 1) return
     const r = await addRegistro({
@@ -23,6 +41,8 @@ export default function TablaPure() {
     if (!r.error) setGuardado(true)
   }
 
+  const fmtKg = (g: number) => g >= 1000 ? `${(g / 1000).toFixed(1)} kg` : `${g} g`
+
   return (
     <div className="bg-surface border border-border rounded-xl p-[14px] mb-[10px] shadow-sm">
       <div className="flex items-center gap-[7px] text-sm font-semibold text-text mb-3">
@@ -30,72 +50,88 @@ export default function TablaPure() {
         <span>
           Puré de papas{' '}
           <span className="font-normal text-text2 text-xs">
-            — {PURE_BARQUETAS} barquetas × {PURE_KG_BARQUETA} kg = {PURE_TOTAL_KG} kg/día
+            — referencia {PURE_BARQUETAS} barquetas × {PURE_KG_BARQUETA} kg = {PURE_TOTAL_KG} kg/día
           </span>
         </span>
       </div>
 
-      <table className="w-full text-xs">
-        <thead>
-          <tr className="text-text2 font-semibold leading-loose">
-            <th className="text-left font-medium">Ingrediente</th>
-            <th className="text-right font-medium">Cantidad</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="py-[6px] text-text">
-              Papas congeladas <span className="text-text2">(2.5 kg/bolsa)</span>
-            </td>
-            <td className="py-[6px] text-right font-mono text-sm font-medium text-text">
-              {PURE.bolsasPapa} bolsas ({PURE.kgBruto} kg)
-            </td>
-          </tr>
-          <tr className="bg-surface2 rounded">
-            <td className="py-[6px] text-text">Merma {PURE.mermaP}%</td>
-            <td className="py-[6px] text-right font-mono text-sm font-medium text-warn">
-              −{PURE.mermaKg} kg
-            </td>
-          </tr>
-          <tr>
-            <td className="py-[6px] text-text font-semibold">Papa cocida disponible</td>
-            <td className="py-[6px] text-right font-mono text-sm font-bold text-accent">
-              ~{PURE.papaCocidaKg} kg
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p className="text-[11px] text-text3 mt-2 italic">
-        Sal + aceite al gusto (~300-400 ml aceite)
-      </p>
-
-      <div className="mt-3 pt-3 border-t border-border">
-        <label className="text-[11px] text-text2 block mb-[3px]">Barquetas producidas</label>
-        <div className="flex gap-2">
-          <input
-            type="number"
-            min={0}
-            value={barquetas}
-            onChange={(e) => { setGuardado(false); setBarquetas(e.target.value) }}
-            className="flex-1 px-[10px] py-[7px] text-sm border border-border rounded-sm bg-bg text-text"
-          />
-          <button
-            onClick={handleGuardar}
-            disabled={!barquetas || parseInt(barquetas) < 1}
-            className="px-3 py-[7px] text-xs font-semibold text-white border-none rounded-sm cursor-pointer disabled:opacity-50"
-            style={{ background: '#1B5E3F' }}
-          >
-            Guardar
-          </button>
+      {/* Receta base */}
+      <div className="bg-surface2 rounded-sm p-3 mb-3">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-text3 mb-[6px]">
+          Receta base ({PURE_RECETA.barquetasBase} barquetas)
+        </p>
+        <div className="space-y-[2px] text-xs">
+          {PURE_RECETA.ingredientes.map((ing) => (
+            <div key={ing.nombre} className="flex justify-between">
+              <span className="text-text">{ing.nombre}</span>
+              <span className="font-mono text-text2">{ing.cantidadBase} {ing.unidad} ({ing.nota})</span>
+            </div>
+          ))}
         </div>
-        {guardado && (
-          <div className="mt-1 flex items-center gap-1 text-xs font-semibold text-accent">
-            <IconCheck size={13} />
-            {barquetas} barquetas ({parseInt(barquetas) * 10} raciones) registradas ✓
-          </div>
-        )}
       </div>
+
+      {/* Input barquetas + Calcular */}
+      <div className="flex gap-2 mb-3">
+        <input
+          type="number"
+          min={1}
+          placeholder="Barquetas necesarias"
+          value={barquetas}
+          onChange={(e) => { setBarquetas(e.target.value); setGuardado(false) }}
+          className="flex-1 px-[10px] py-[7px] text-sm border border-border rounded-sm bg-bg text-text"
+        />
+        <button
+          onClick={handleCalcular}
+          disabled={!barquetas || parseInt(barquetas) < 1}
+          className="px-3 py-[7px] text-xs font-semibold text-white border-none rounded-sm cursor-pointer flex items-center gap-1 disabled:opacity-50"
+          style={{ background: '#1B5E3F' }}
+        >
+          <IconCalculator size={14} />
+          Calcular
+        </button>
+      </div>
+
+      {/* Resultado */}
+      {resultado && (
+        <div className="bg-surface border border-border rounded-sm p-3 mb-3">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-text3 mb-[6px]">
+            Resultado para {resultado.barquetas} barquetas
+          </p>
+          <div className="space-y-[2px] text-xs mb-2">
+            {resultado.ingredientes.map((ing) => (
+              <div key={ing.nombre} className="flex justify-between items-baseline">
+                <span className="text-text">{ing.nombre}</span>
+                <span className="font-mono text-sm font-semibold text-accent">
+                  {ing.cantidadBase} {ing.unidad} ({ing.nota})
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="text-[11px] text-text3 space-y-[2px]">
+            <p className="font-mono"><span className="italic">Peso bruto: {fmtKg(resultado.totalKg * 1000)}</span></p>
+            {resultado.observaciones.map((obs, i) => (
+              <p key={i} className="italic">{obs}</p>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Registrar */}
+      {resultado && (
+        guardado ? (
+          <div className="flex items-center justify-center gap-1 text-xs font-semibold text-accent py-[7px]">
+            <IconCheck size={14} />
+            {resultado.barquetas} barquetas ({resultado.barquetas * 10} raciones) registradas ✓
+          </div>
+        ) : (
+          <button
+            onClick={handleRegistrar}
+            className="w-full py-[7px] text-xs font-semibold border border-accent rounded-sm bg-accent-light text-accent cursor-pointer active:scale-[0.98] transition-transform"
+          >
+            Registrar producción
+          </button>
+        )
+      )}
     </div>
   )
 }

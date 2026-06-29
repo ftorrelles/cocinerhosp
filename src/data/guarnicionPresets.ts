@@ -8,5 +8,4 @@ export const GUARNICION_PRESETS: string[] = [
   'Zanahoria',
   'Col Bruselas',
   'Papas dólar',
-  'Puré de papa',
 ]
