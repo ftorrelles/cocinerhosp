@@ -1,6 +1,7 @@
 import { IconSoup } from '@tabler/icons-react'
 import TablaChinos from '../components/blandas/TablaChinos'
 import TablaPure from '../components/blandas/TablaPure'
+import CalculadoraPapas from '../components/blandas/CalculadoraPapas'
 
 export default function Blandas() {
   return (
@@ -17,6 +18,12 @@ export default function Blandas() {
       {/* Cards */}
       <TablaChinos />
       <TablaPure />
+
+      {/* Separador */}
+      <div className="border-t border-border my-[14px]" />
+
+      {/* Calculadora de pedido semanal */}
+      <CalculadoraPapas />
     </>
   )
 }
