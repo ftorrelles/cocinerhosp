@@ -39,7 +39,7 @@ export const CHINOS_RECETAS: RecetaBlando[] = [
     ingredientes: [
       { nombre: 'Papas congeladas', cantidadBase: 3, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
       { nombre: 'Zanahoria congelada', cantidadBase: 1, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
-      { nombre: 'Cebolla', cantidadBase: 6, unidad: 'unidades' },
+      { nombre: 'Cebolla', cantidadBase: 5, unidad: 'unidades' },
     ],
   },
   {
@@ -51,7 +51,7 @@ export const CHINOS_RECETAS: RecetaBlando[] = [
     ingredientes: [
       { nombre: 'Papas congeladas', cantidadBase: 3, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
       { nombre: 'Calabaza congelada', cantidadBase: 1, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
-      { nombre: 'Cebolla', cantidadBase: 6, unidad: 'unidades' },
+      { nombre: 'Cebolla', cantidadBase: 5, unidad: 'unidades' },
     ],
   },
   {
@@ -63,7 +63,7 @@ export const CHINOS_RECETAS: RecetaBlando[] = [
     ingredientes: [
       { nombre: 'Papas congeladas', cantidadBase: 3, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
       { nombre: 'Calabacín congelado', cantidadBase: 1, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
-      { nombre: 'Cebolla', cantidadBase: 6, unidad: 'unidades' },
+      { nombre: 'Cebolla', cantidadBase: 5, unidad: 'unidades' },
     ],
   },
 ]
