@@ -102,16 +102,16 @@ export const MOLIDO_BARQUETAS = 20
 export const MOLIDO_KG_BARQUETA = 3
 export const MOLIDO_TOTAL_KG = 60
 
-// ── PURÉ DE PAPAS — base 22 barquetas ──
+// ── PURÉ DE PAPAS — 1.5 bolsas por barqueta (15 para 10, 30 para 20) ──
 
 export const PURE_RECETAS: RecetaBlando[] = [
   {
     id: 'pure',
     nombre: 'Puré de papas',
     seccion: 'pure',
-    barquetasBase: 22,
+    barquetasBase: 2,
     ingredientes: [
-      { nombre: 'Papas congeladas', cantidadBase: 32, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
+      { nombre: 'Papas congeladas', cantidadBase: 3, unidad: 'bolsas', nota: '2.5 kg/bolsa' },
     ],
   },
 ]

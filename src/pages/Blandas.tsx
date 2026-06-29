@@ -1,6 +1,5 @@
 import { IconSoup } from '@tabler/icons-react'
 import TablaChinos from '../components/blandas/TablaChinos'
-import TablaMolido from '../components/blandas/TablaMolido'
 import TablaPure from '../components/blandas/TablaPure'
 
 export default function Blandas() {
@@ -17,7 +16,6 @@ export default function Blandas() {
 
       {/* Cards */}
       <TablaChinos />
-      <TablaMolido />
       <TablaPure />
     </>
   )
