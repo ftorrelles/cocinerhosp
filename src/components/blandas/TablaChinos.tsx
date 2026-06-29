@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { IconSoup, IconCalculator, IconCheck } from '@tabler/icons-react'
 import { useAppStore } from '../../store/useAppStore'
 import { useHistorial } from '../../hooks/useHistorial'
-import { CHINOS_RECETAS, CHINOS_BARQUETAS, CHINOS_KG_BARQUETA, CHINOS_TOTAL_KG, escalarReceta, type ResultadoBlando } from '../../data/blandas'
+import { CHINOS_RECETAS, escalarReceta, type ResultadoBlando } from '../../data/blandas'
 
 const CHINO_OPTIONS = CHINOS_RECETAS.map((r) => ({ id: r.id, nombre: r.nombre, subtipo: r.subtipo }))
 
@@ -12,11 +12,11 @@ export default function TablaChinos() {
   const { addRegistro } = useHistorial(user?.id)
 
   const [selectedId, setSelectedId] = useState(CHINO_OPTIONS[0]?.id ?? '')
-  const [barquetas, setBarquetas] = useState('')
+  const receta = CHINOS_RECETAS.find((r) => r.id === selectedId)
+
+  const [barquetas, setBarquetas] = useState(String(receta?.barquetasBase ?? 22))
   const [resultado, setResultado] = useState<ResultadoBlando | null>(null)
   const [guardado, setGuardado] = useState(false)
-
-  const receta = CHINOS_RECETAS.find((r) => r.id === selectedId)
 
   const handleCalcular = () => {
     const b = parseInt(barquetas) || 0
@@ -51,7 +51,7 @@ export default function TablaChinos() {
         <span>
           Chinos{' '}
           <span className="font-normal text-text2 text-xs">
-            — referencia {CHINOS_BARQUETAS} barquetas × {CHINOS_KG_BARQUETA} kg = {CHINOS_TOTAL_KG} kg/día
+            — indicá las barquetas para calcular los ingredientes
           </span>
         </span>
       </div>

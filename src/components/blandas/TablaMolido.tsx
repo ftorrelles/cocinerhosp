@@ -5,9 +5,6 @@ import { useHistorial } from '../../hooks/useHistorial'
 import {
   MOLIDO_RECETAS,
   MOLIDO_PROTEINA,
-  MOLIDO_BARQUETAS,
-  MOLIDO_KG_BARQUETA,
-  MOLIDO_TOTAL_KG,
   escalarReceta,
   type ResultadoBlando,
 } from '../../data/blandas'
@@ -19,7 +16,7 @@ export default function TablaMolido() {
   const servicio = useAppStore((s) => s.servicio)
   const { addRegistro } = useHistorial(user?.id)
 
-  const [barquetas, setBarquetas] = useState('')
+  const [barquetas, setBarquetas] = useState(String(MOLIDO_RECETA.barquetasBase))
   const [resultado, setResultado] = useState<ResultadoBlando | null>(null)
   const [guardado, setGuardado] = useState(false)
 
@@ -56,7 +53,7 @@ export default function TablaMolido() {
         <span>
           Molido{' '}
           <span className="font-normal text-text2 text-xs">
-            — referencia {MOLIDO_BARQUETAS} barquetas × {MOLIDO_KG_BARQUETA} kg = {MOLIDO_TOTAL_KG} kg/día
+            — indicá las barquetas para calcular los ingredientes
           </span>
         </span>
       </div>

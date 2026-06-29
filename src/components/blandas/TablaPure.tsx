@@ -4,9 +4,6 @@ import { useAppStore } from '../../store/useAppStore'
 import { useHistorial } from '../../hooks/useHistorial'
 import {
   PURE_RECETAS,
-  PURE_BARQUETAS,
-  PURE_KG_BARQUETA,
-  PURE_TOTAL_KG,
   escalarReceta,
   type ResultadoBlando,
 } from '../../data/blandas'
@@ -18,7 +15,7 @@ export default function TablaPure() {
   const servicio = useAppStore((s) => s.servicio)
   const { addRegistro } = useHistorial(user?.id)
 
-  const [barquetas, setBarquetas] = useState('')
+  const [barquetas, setBarquetas] = useState(String(PURE_RECETA.barquetasBase))
   const [resultado, setResultado] = useState<ResultadoBlando | null>(null)
   const [guardado, setGuardado] = useState(false)
 
@@ -50,7 +47,7 @@ export default function TablaPure() {
         <span>
           Puré de papas{' '}
           <span className="font-normal text-text2 text-xs">
-            — referencia {PURE_BARQUETAS} barquetas × {PURE_KG_BARQUETA} kg = {PURE_TOTAL_KG} kg/día
+            — indicá las barquetas para calcular los ingredientes
           </span>
         </span>
       </div>
