@@ -7,9 +7,10 @@ import { useHistorial } from '../../hooks/useHistorial'
 
 interface GuarnicionSectionProps {
   preparacionId: string
+  index: number
 }
 
-export default function GuarnicionSection({ preparacionId }: GuarnicionSectionProps) {
+export default function GuarnicionSection({ preparacionId, index }: GuarnicionSectionProps) {
   const prep = useAppStore((s) => s.guarniciones.find((g) => g.id === preparacionId))
   const updateGuarnicion = useAppStore((s) => s.updateGuarnicion)
   const removeGuarnicion = useAppStore((s) => s.removeGuarnicion)
@@ -95,7 +96,7 @@ export default function GuarnicionSection({ preparacionId }: GuarnicionSectionPr
 
   return (
     <div className="bg-surface2 border border-border rounded-sm mb-[10px] overflow-hidden">
-      {/* Header with name */}
+      {/* Header with name + patients */}
       {!showCustom && (
         <div className="bg-surface px-3 py-[10px] flex items-center gap-2 border-b border-border">
           <input
@@ -106,6 +107,11 @@ export default function GuarnicionSection({ preparacionId }: GuarnicionSectionPr
             onBlur={() => { syncToStore(); detectarMerma(nombre, 'guar') }}
             className="flex-1 text-sm font-semibold border-none bg-transparent text-text placeholder:text-text3 min-w-0 outline-none"
           />
+          {prep.pacientesAsignados > 0 && (
+            <span className="shrink-0 bg-accent-light text-accent font-mono text-[11px] px-2 py-[2px] rounded-sm leading-tight">
+              {prep.pacientesAsignados} / {totalPacientes} pac. ({Math.round(prep.pacientesAsignados / totalPacientes * 100)}%)
+            </span>
+          )}
           <button
             onClick={() => removeGuarnicion(prep.id)}
             className="px-2 py-1 text-xs bg-transparent border border-border rounded-[6px] text-text3 cursor-pointer flex-shrink-0"
@@ -119,7 +125,7 @@ export default function GuarnicionSection({ preparacionId }: GuarnicionSectionPr
         {/* Preset chips */}
         <div className="sec-lbl mb-2">
           <IconSnowflake size={13} style={{ verticalAlign: -2 }} />
-          {' Guarnición — selección rápida'}
+          {` Guarnición ${index + 1} — selección rápida`}
         </div>
 
         <div className="flex flex-wrap gap-[5px] mb-3">
@@ -274,7 +280,7 @@ export default function GuarnicionSection({ preparacionId }: GuarnicionSectionPr
         {/* Calcular button */}
         <button
           onClick={handleCalculate}
-          disabled={totalPacientes === 0}
+          disabled={!prep || prep.pacientesAsignados === 0}
           className="w-full py-[9px] text-xs font-semibold text-white border-none rounded-sm flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed mt-2"
           style={{ background: '#1B5E3F' }}
         >

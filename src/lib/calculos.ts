@@ -50,6 +50,20 @@ export function calcularProteina(params: {
   return { unidadesNecesarias, cajasAbrir, unidadesDisponibles, sobrante, sobranteRaciones, mermaP }
 }
 
+// ── REPARTO DE PACIENTES ENTRE GUARNICIONES ──
+
+export function calcularReparto(
+  totalPacientes: number,
+  cantidad: number,
+): number[] {
+  if (cantidad <= 1) return [totalPacientes]
+  const base = Math.floor(totalPacientes / cantidad)
+  const resto = totalPacientes % cantidad
+  return Array.from({ length: cantidad }, (_, i) =>
+    i === 0 ? base + resto : base,
+  )
+}
+
 // ── BANDEJAS DE HORNO ──
 
 export function calcularBandejasHorno(params: {

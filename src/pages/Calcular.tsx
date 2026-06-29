@@ -94,17 +94,19 @@ export default function Calcular() {
               </div>
 
               <div id="lista-guarniciones">
-                {guarniciones.map((g) => (
-                  <GuarnicionSection key={g.id} preparacionId={g.id} />
+                {guarniciones.map((g, i) => (
+                  <GuarnicionSection key={g.id} preparacionId={g.id} index={i} />
                 ))}
               </div>
 
-              <button
-                onClick={() => addGuarnicion()}
-                className="w-full py-[9px] text-xs bg-transparent border border-dashed border-border rounded-sm text-text2 cursor-pointer mt-1 hover:bg-accent-light hover:text-accent hover:border-accent transition-colors"
-              >
-                <IconPlus size={13} style={{ verticalAlign: -1 }} /> Añadir otra guarnición
-              </button>
+              {guarniciones.length < 3 && (
+                <button
+                  onClick={() => addGuarnicion()}
+                  className="w-full py-[9px] text-xs bg-transparent border border-dashed border-border rounded-sm text-text2 cursor-pointer mt-1 hover:bg-accent-light hover:text-accent hover:border-accent transition-colors"
+                >
+                  <IconPlus size={13} style={{ verticalAlign: -1 }} /> Añadir otra guarnición
+                </button>
+              )}
             </>
           )}
         </div>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { calcularProteina, calcularGuarnicion, calcularBandejasHorno, calcularDesgloseCentros, escalarIngredientes } from './calculos'
+import { calcularProteina, calcularGuarnicion, calcularBandejasHorno, calcularDesgloseCentros, escalarIngredientes, calcularReparto } from './calculos'
 import { CENTROS } from '../data/centros'
 
 describe('calcularProteina', () => {
@@ -119,6 +119,32 @@ describe('calcularGuarnicion', () => {
     // brutoNecesario = 12000 / 2.5 = 4800
     // bolsas = CEIL(4800/2500) = 2
     expect(result.bolsas).toBe(2)
+  })
+})
+
+describe('calcularReparto', () => {
+  it('1 guarnición = 100% pacientes', () => {
+    expect(calcularReparto(414, 1)).toEqual([414])
+  })
+
+  it('2 guarniciones = 50% cada una', () => {
+    expect(calcularReparto(414, 2)).toEqual([207, 207])
+  })
+
+  it('3 guarniciones = división exacta', () => {
+    expect(calcularReparto(414, 3)).toEqual([138, 138, 138])
+  })
+
+  it('3 guarniciones con sobrante — primera absorbe', () => {
+    expect(calcularReparto(415, 3)).toEqual([139, 138, 138])
+  })
+
+  it('2 guarniciones con sobrante — primera absorbe', () => {
+    expect(calcularReparto(101, 2)).toEqual([51, 50])
+  })
+
+  it('0 pacientes = todo ceros', () => {
+    expect(calcularReparto(0, 3)).toEqual([0, 0, 0])
   })
 })
 

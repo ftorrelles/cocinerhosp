@@ -4,6 +4,7 @@ import {
   calcularProteina,
   calcularGuarnicion,
   calcularDesgloseCentros,
+  calcularReparto,
   type ProteinaResult,
   type GuarnicionResult,
   type DesgloseCentro,
@@ -30,6 +31,7 @@ export interface PreparacionGuarnicion {
   mermaAuto: boolean
   mermaSource: string
   gramos: number
+  pacientesAsignados: number
 }
 
 export interface UserSession {
@@ -63,6 +65,7 @@ export interface AppState {
   updateGuarnicion: (id: string, changes: Partial<PreparacionGuarnicion>) => void
   calcularGuarnicionPrep: (id: string) => void
 
+  recalcularAsignaciones: () => void
   resetResultados: () => void
   getTotalPacientes: () => number
   setUser: (user: UserSession | null) => void
@@ -92,6 +95,7 @@ function createDefaultGuarnicion(): PreparacionGuarnicion {
     mermaAuto: false,
     mermaSource: '',
     gramos: 120,
+    pacientesAsignados: 0,
   }
 }
 
@@ -117,6 +121,7 @@ function createEjemploGuarnicion(): PreparacionGuarnicion {
     mermaAuto: true,
     mermaSource: 'Arroz: absorbe agua, triplica peso (factor ×3)',
     gramos: 120,
+    pacientesAsignados: 0,
   }
 }
 
@@ -137,6 +142,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       servicio,
       pacientes: getPacientesPorServicio(servicio),
     })
+    get().recalcularAsignaciones()
   },
 
   setPaciente: (centroId, valor) => {
@@ -205,17 +211,21 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   addGuarnicion: (preset) => {
-    set((state) => {
+    const state = get()
+    if (state.guarniciones.length >= 3) return  // max 3
+    set((s) => {
       const nueva = createDefaultGuarnicion()
       if (preset) Object.assign(nueva, preset)
-      return { guarniciones: [...state.guarniciones, nueva] }
+      return { guarniciones: [...s.guarniciones, nueva] }
     })
+    get().recalcularAsignaciones()
   },
 
   removeGuarnicion: (id) => {
     set((state) => ({
       guarniciones: state.guarniciones.filter((g) => g.id !== id),
     }))
+    get().recalcularAsignaciones()
   },
 
   updateGuarnicion: (id, changes) => {
@@ -228,15 +238,11 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   calcularGuarnicionPrep: (id) => {
     const state = get()
-    const totalPacientes = Object.values(state.pacientes).reduce(
-      (a, b) => a + b,
-      0,
-    )
     const prep = state.guarniciones.find((g) => g.id === id)
-    if (!prep || totalPacientes === 0) return
+    if (!prep || prep.pacientesAsignados === 0) return
 
     const resultado = calcularGuarnicion({
-      totalPacientes,
+      totalPacientes: prep.pacientesAsignados,
       bolsaKg: prep.bolsaKg,
       mermaP: prep.merma,
       racionG: prep.gramos,
@@ -248,6 +254,18 @@ export const useAppStore = create<AppState>((set, get) => ({
         [id]: resultado,
       },
     }))
+  },
+
+  recalcularAsignaciones: () => {
+    const state = get()
+    const total = Object.values(state.pacientes).reduce((a, b) => a + b, 0)
+    const shares = calcularReparto(total, state.guarniciones.length)
+    set({
+      guarniciones: state.guarniciones.map((g, i) => ({
+        ...g,
+        pacientesAsignados: shares[i] ?? total,
+      })),
+    })
   },
 
   resetResultados: () => {
