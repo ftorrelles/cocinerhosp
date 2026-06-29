@@ -265,6 +265,8 @@ export const useAppStore = create<AppState>((set, get) => ({
         ...g,
         pacientesAsignados: shares[i] ?? total,
       })),
+      // Clear stale results — old cálculos ya no corresponden
+      resultadosGuarniciones: {},
     })
   },
 
@@ -280,3 +282,6 @@ export const useAppStore = create<AppState>((set, get) => ({
     return Object.values(get().pacientes).reduce((a, b) => a + b, 0)
   },
 }))
+
+// Initialize reparto — la guarnición por defecto arranca con pacientesAsignados correctos
+useAppStore.getState().recalcularAsignaciones()
